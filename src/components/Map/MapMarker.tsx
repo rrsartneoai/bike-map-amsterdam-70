@@ -3,7 +3,7 @@ import React from 'react';
 import { Marker, Popup } from 'react-leaflet';
 import { Icon, DivIcon } from 'leaflet';
 import { BikeRental } from '@/types';
-import { Bike } from 'lucide-react';
+import { Bike, Info, Clock, Phone, Globe } from 'lucide-react';
 
 interface MapMarkerProps {
   rental: BikeRental;
@@ -32,19 +32,23 @@ const getBikeAvailabilityBg = (available: number, total: number): string => {
 };
 
 const MapMarker: React.FC<MapMarkerProps> = ({ rental, isSelected = false, onClick }) => {
+  // Handle potential missing data
+  const availableBikes = rental.bikes?.available ?? 0;
+  const totalBikes = rental.bikes?.total ?? 0;
+  
   const availabilityColor = getBikeAvailabilityColor(
-    rental.bikes.available,
-    rental.bikes.total
+    availableBikes,
+    totalBikes
   );
   
   const availabilityBg = getBikeAvailabilityBg(
-    rental.bikes.available,
-    rental.bikes.total
+    availableBikes,
+    totalBikes
   );
 
   const textColor = getBikeAvailabilityTextColor(
-    rental.bikes.available,
-    rental.bikes.total
+    availableBikes,
+    totalBikes
   );
   
   // Create a custom icon with HTML content for better styling
@@ -62,7 +66,7 @@ const MapMarker: React.FC<MapMarkerProps> = ({ rental, isSelected = false, onCli
             <path d="M15 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-3 11.5V14l-3-3 4-3 2 3h2"/>
           </svg>
         </div>
-        <div class="bike-count ${textColor}">${rental.bikes.available}</div>
+        <div class="bike-count ${textColor}">${availableBikes || '?'}</div>
       </div>
     `;
 
@@ -90,32 +94,66 @@ const MapMarker: React.FC<MapMarkerProps> = ({ rental, isSelected = false, onCli
       }}
     >
       <Popup>
-        <div className="p-2">
-          <h3 className="font-semibold">{rental.name}</h3>
-          <div className="text-sm mt-1">
-            <span className="font-medium">Available bikes: </span>
-            <span className={`inline-block w-3 h-3 rounded-full ${availabilityBg} mr-1`}></span>
-            <span>{rental.bikes.available} / {rental.bikes.total}</span>
+        <div className="p-3 min-w-[250px]">
+          <h3 className="font-semibold text-lg mb-2">
+            {rental.name || 'Bike Rental'}
+            {totalBikes > 0 && (
+              <span className="ml-2 text-sm bg-primary/10 text-primary px-2 py-0.5 rounded">
+                {totalBikes} bikes
+              </span>
+            )}
+          </h3>
+          
+          {(availableBikes !== undefined || totalBikes > 0) && (
+            <div className="mb-3 p-2 rounded bg-gray-50">
+              <p className="text-sm font-medium text-gray-900">
+                Available bikes: {availableBikes || '?'} / {totalBikes || '?'}
+              </p>
+              <div className="mt-1 h-2 w-full bg-gray-200 rounded-full overflow-hidden">
+                <div
+                  className={`h-full ${availableBikes > 0 ? 'bg-primary' : 'bg-red-500'}`}
+                  style={{
+                    width: `${totalBikes ? (availableBikes / totalBikes) * 100 : 0}%`
+                  }}
+                />
+              </div>
+            </div>
+          )}
+          
+          <div className="space-y-1.5">
+            <p className="text-sm text-gray-700">
+              <strong>Operator:</strong> {rental.operator || 'Information not available'}
+            </p>
+            
+            {rental.address && (
+              <p className="text-sm text-gray-700">
+                <strong>Address:</strong> {rental.address}
+              </p>
+            )}
+            
+            {rental.bikes && rental.bikes.types && Object.keys(rental.bikes.types).length > 0 && (
+              <div className="text-sm mt-1">
+                <strong>Bike types:</strong>{' '}
+                {Object.entries(rental.bikes.types).map(([type, count]) => (
+                  <span key={type} className="mr-2">
+                    {type}: {count}
+                  </span>
+                ))}
+              </div>
+            )}
+            
+            {rental.amenities && rental.amenities.length > 0 && (
+              <p className="text-sm text-gray-700">
+                <strong>Amenities:</strong> {rental.amenities.join(', ')}
+              </p>
+            )}
+            
+            {rental.lastUpdated && (
+              <p className="text-xs text-gray-500 italic mt-2">
+                Last updated: {new Date(rental.lastUpdated).toLocaleString()}
+              </p>
+            )}
           </div>
-          {rental.bikes.types && Object.keys(rental.bikes.types).length > 0 && (
-            <div className="text-sm mt-1">
-              <span className="font-medium">Types: </span>
-              {Object.entries(rental.bikes.types).map(([type, count]) => (
-                <span key={type} className="mr-2">
-                  {type}: {count}
-                </span>
-              ))}
-            </div>
-          )}
-          {rental.address && (
-            <div className="text-sm mt-1">{rental.address}</div>
-          )}
-          {rental.operator && (
-            <div className="text-sm mt-1">
-              <span className="font-medium">Operator: </span>
-              {rental.operator}
-            </div>
-          )}
         </div>
       </Popup>
     </Marker>
