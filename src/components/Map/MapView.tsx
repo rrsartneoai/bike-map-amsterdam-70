@@ -87,7 +87,7 @@ const MapView: React.FC<MapViewProps> = ({
         scrollWheelZoom={true}
         zoomControl={false}
         className="h-full w-full"
-        whenReady={(event) => handleMapInit(event.target)}
+        whenReady={(e) => handleMapInit(e.target)}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
