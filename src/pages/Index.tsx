@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback } from 'react';
 import { toast } from 'sonner';
 import { useQuery } from '@tanstack/react-query';
@@ -8,7 +9,7 @@ import FilterPanel from '@/components/Filters/FilterPanel';
 import BikeRentalCard from '@/components/UI/BikeRentalCard';
 import Navbar from '@/components/Nav/Navbar';
 import useMap from '@/hooks/useMap';
-import { fetchBikeRentals } from '@/lib/api';
+import { fetchBikeRentals, getBikeRentalDetails } from '@/lib/api';
 import { BikeRental, FilterOptions, SearchResult } from '@/types';
 
 const Index = () => {
@@ -98,18 +99,48 @@ const Index = () => {
   }, [bikeRentalsData, applyFilters]);
   
   // Handle search result selection
-  const handleSearchSelect = (result: SearchResult) => {
+  const handleSearchSelect = async (result: SearchResult) => {
     console.log('Search result selected:', result);
+    
+    if (!result || !result.location) {
+      console.error('Invalid search result:', result);
+      return;
+    }
+    
+    // Pan to the location
     panToLocation([result.location.lat, result.location.lng], 16);
     
     if (result.type === 'bikeRental') {
-      // Find the bike rental in our data
-      const rental = filteredRentals.find(r => r.id === result.id);
-      if (rental) {
-        console.log('Found matching rental:', rental);
-        handleMarkerClick(rental);
-      } else {
-        console.log('No matching rental found for ID:', result.id);
+      try {
+        // Find the bike rental in our data
+        const rental = filteredRentals.find(r => r.id === result.id);
+        
+        if (rental) {
+          console.log('Found matching rental in filtered rentals:', rental);
+          handleMarkerClick(rental);
+        } else if (bikeRentalsData?.data) {
+          // Try finding in the original data
+          const allRental = bikeRentalsData.data.find(r => r.id === result.id);
+          if (allRental) {
+            console.log('Found matching rental in all rentals:', allRental);
+            handleMarkerClick(allRental);
+          } else {
+            // If not in local data, try fetching details
+            console.log('No matching rental found in local data, fetching details for ID:', result.id);
+            const fetchedRental = await getBikeRentalDetails(result.id);
+            if (fetchedRental) {
+              handleMarkerClick(fetchedRental);
+            } else {
+              toast.error('Could not find rental details');
+            }
+          }
+        } else {
+          console.log('No matching rental found for ID:', result.id);
+          toast.error('Rental location not found');
+        }
+      } catch (error) {
+        console.error('Error handling search selection:', error);
+        toast.error('Failed to select rental location');
       }
     }
   };

@@ -24,9 +24,9 @@ const SearchBar = ({ onSelect }: SearchBarProps) => {
         setIsLoading(true);
         try {
           const searchResults = await searchLocations(query);
+          console.log('Search results:', searchResults); // Debug search results
           setResults(searchResults);
           setIsOpen(searchResults.length > 0);
-          console.log('Search results:', searchResults); // Debug search results
         } catch (error) {
           console.error('Search error:', error);
           setResults([]);
