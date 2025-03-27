@@ -148,7 +148,7 @@ const MapView: React.FC<MapViewProps> = ({
           }
 
           // Create bike types from available tags
-          const bikeTypes: Record<string, number> = {};
+          const bikeTypes: Record<string, number] = {};
           if (element.tags?.bicycle_types) {
             bikeTypes[element.tags.bicycle_types.toLowerCase()] = available;
           } else if (element.tags?.rental) {
@@ -188,6 +188,7 @@ const MapView: React.FC<MapViewProps> = ({
             }
           }
 
+          // Construct the rental object with proper typing
           return {
             id: element.id.toString(),
             name: name,
@@ -221,13 +222,22 @@ const MapView: React.FC<MapViewProps> = ({
     fetchAllBikeRentals();
   }, []);
 
+  // Filter out rentals with invalid coordinates
+  const validRentals = (displayRentals: BikeRental[]) => {
+    return displayRentals.filter(rental => 
+      rental.location && 
+      typeof rental.location.lat === 'number' && 
+      typeof rental.location.lng === 'number' &&
+      !isNaN(rental.location.lat) && 
+      !isNaN(rental.location.lng)
+    );
+  };
+
   // Combine the fetched rentals with the ones from props
   const displayRentals = allBikeRentals.length > 0 ? allBikeRentals : bikeRentals;
+  const rentalsToDisplay = validRentals(displayRentals);
 
-  console.log("bikeRentals length", bikeRentals.length);
   return (
-    
-    console.log("MapView - displayRentals:", displayRentals),
     <div className="map-container">
       <MapContainer
         center={center || defaultCenter}
@@ -244,17 +254,14 @@ const MapView: React.FC<MapViewProps> = ({
         
         <MapController />
         
-        {!isLoading && !loading && displayRentals.map((rental) => {
-          console.log("Rental data:", rental);
-          return (
-            <MapMarker
-              key={rental.id}
-              rental={rental}
-              isSelected={selectedRental?.id === rental.id}
-              onClick={handleMarkerClick}
-            />
-          );
-        })}
+        {!isLoading && !loading && rentalsToDisplay.map((rental) => (
+          <MapMarker
+            key={rental.id}
+            rental={rental}
+            isSelected={selectedRental?.id === rental.id}
+            onClick={handleMarkerClick}
+          />
+        ))}
       </MapContainer>
       
       {/* Loading indicator for Overpass API */}
