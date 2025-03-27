@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -183,6 +184,20 @@ nav.navbar {
 /* Ensure popups stay above everything */
 .leaflet-popup {
   z-index: 1003 !important;
+}
+
+/* Layer control styling */
+.leaflet-control {
+  z-index: 1002 !important;
+}
+
+/* Search bar positioning */
+.search-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1002;
 }
 
 /* Make sure filter panel and search bar stay above map */

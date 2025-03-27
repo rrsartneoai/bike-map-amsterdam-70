@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { toast } from 'sonner';
 import { useQuery } from '@tanstack/react-query';
@@ -100,13 +99,17 @@ const Index = () => {
   
   // Handle search result selection
   const handleSearchSelect = (result: SearchResult) => {
+    console.log('Search result selected:', result);
     panToLocation([result.location.lat, result.location.lng], 16);
     
     if (result.type === 'bikeRental') {
       // Find the bike rental in our data
       const rental = filteredRentals.find(r => r.id === result.id);
       if (rental) {
+        console.log('Found matching rental:', rental);
         handleMarkerClick(rental);
+      } else {
+        console.log('No matching rental found for ID:', result.id);
       }
     }
   };
@@ -140,7 +143,7 @@ const Index = () => {
         onMarkerClick={handleMarkerClick}
       />
       
-      {/* UI Components - Search, Filter, etc. in a dedicated wrapper */}
+      {/* UI Components - Navbar, Search, Filter, etc. */}
       <div className="fixed-ui-elements">
         <Navbar />
         <SearchBar onSelect={handleSearchSelect} />

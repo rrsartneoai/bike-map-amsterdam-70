@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { MapContainer, TileLayer } from 'react-leaflet';
+import { MapContainer, ZoomControl } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import useMap from '@/hooks/useMap';
 import { BikeRental } from '@/types';
@@ -9,6 +9,7 @@ import MapController from './MapController';
 import MapLoading from './MapLoading';
 import MapNoResults from './MapNoResults';
 import MapError from './MapError';
+import LayerControl from './LayerControl';
 import { initializeLeafletIcons, fetchBikeRentalsFromOverpass } from './mapUtils';
 
 // Initialize Leaflet icons to fix default icon issue
@@ -118,11 +119,10 @@ const MapView: React.FC<MapViewProps> = ({
         ref={onMapInit}
         closePopupOnClick={false} // Prevent popup from closing when clicking elsewhere
       >
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
+        {/* Map layers will be provided by LayerControl */}
+        <LayerControl />
         
+        <ZoomControl position="topright" />
         <MapController />
         
         {rentalsToDisplay.length > 0 && (

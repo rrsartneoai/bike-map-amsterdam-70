@@ -26,6 +26,7 @@ const SearchBar = ({ onSelect }: SearchBarProps) => {
           const searchResults = await searchLocations(query);
           setResults(searchResults);
           setIsOpen(searchResults.length > 0);
+          console.log('Search results:', searchResults); // Debug search results
         } catch (error) {
           console.error('Search error:', error);
           setResults([]);
@@ -62,6 +63,7 @@ const SearchBar = ({ onSelect }: SearchBarProps) => {
   
   // Handle result selection
   const handleResultSelect = (result: SearchResult) => {
+    console.log('Selected search result:', result); // Debug selected result
     onSelect(result);
     setQuery(result.name);
     setIsOpen(false);
@@ -76,7 +78,7 @@ const SearchBar = ({ onSelect }: SearchBarProps) => {
   };
   
   return (
-    <div className="search-container">
+    <div className="search-container max-w-md mx-auto px-4 pt-16 z-[1002] relative">
       <div className="relative w-full">
         <div className="relative">
           <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -85,7 +87,7 @@ const SearchBar = ({ onSelect }: SearchBarProps) => {
           <input
             ref={inputRef}
             type="text"
-            className="w-full py-3 pl-10 pr-10 bg-transparent border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
+            className="w-full py-3 pl-10 pr-10 bg-background/90 backdrop-blur-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
             placeholder="Search for bike rentals in Amsterdam..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
@@ -123,7 +125,7 @@ const SearchBar = ({ onSelect }: SearchBarProps) => {
                     >
                       <div className="flex-shrink-0 mt-0.5">
                         {result.type === 'bikeRental' ? (
-                          <Bike className="w-5 h-5 text-primary" />
+                          <Bike className="w-5 h-5 text-green-500" />
                         ) : (
                           <MapPin className="w-5 h-5 text-destructive" />
                         )}
