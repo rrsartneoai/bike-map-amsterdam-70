@@ -9,7 +9,7 @@ import MapController from './MapController';
 import MapLoading from './MapLoading';
 import MapNoResults from './MapNoResults';
 import MapError from './MapError';
-import { initializeLeafletIcons } from './mapUtils';
+import { initializeLeafletIcons, fetchBikeRentalsFromOverpass } from './mapUtils';
 
 // Initialize Leaflet icons to fix default icon issue
 initializeLeafletIcons();
