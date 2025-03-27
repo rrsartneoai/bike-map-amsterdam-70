@@ -59,6 +59,34 @@
   }
 }
 
+/* Bike Animation */
+.bike-animation {
+  position: relative;
+  overflow: hidden;
+}
+
+.bike-animation svg {
+  animation: bike-ride 3s infinite linear;
+}
+
+@keyframes bike-ride {
+  0% {
+    transform: translateX(-10px) rotate(0deg);
+  }
+  25% {
+    transform: translateX(-5px) rotate(2deg);
+  }
+  50% {
+    transform: translateX(0) rotate(0deg);
+  }
+  75% {
+    transform: translateX(5px) rotate(-2deg);
+  }
+  100% {
+    transform: translateX(-10px) rotate(0deg);
+  }
+}
+
 /* Custom map styles */
 .bike-marker {
   filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.3));

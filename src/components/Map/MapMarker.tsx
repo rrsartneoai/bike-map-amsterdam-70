@@ -3,7 +3,7 @@ import React from 'react';
 import { Marker, Popup } from 'react-leaflet';
 import { Icon } from 'leaflet';
 import { BikeRental } from '@/types';
-import { Bike, MapPin, Clock, Star, Info } from 'lucide-react';
+import { Bike, MapPin, Clock, Star, Info, ExternalLink } from 'lucide-react';
 
 interface MapMarkerProps {
   rental: BikeRental;
@@ -63,6 +63,9 @@ const MapMarker: React.FC<MapMarkerProps> = ({ rental, isSelected = false, onCli
     // Using publicly available static map service
     return `https://maps.geoapify.com/v1/staticmap?style=osm-carto&width=${width}&height=${height}&center=lonlat:${rental.location.lng},${rental.location.lat}&zoom=${zoom}&marker=lonlat:${rental.location.lng},${rental.location.lat};color:%232563eb;size:large&apiKey=15e7c8fc456e455ca57c464e9dbbf77e`;
   };
+
+  // Create a website URL for the rental (using a dummy URL if none provided)
+  const rentalUrl = `https://example.com/bike-rentals/${rental.id}`;
 
   return (
     <Marker
@@ -201,6 +204,19 @@ const MapMarker: React.FC<MapMarkerProps> = ({ rental, isSelected = false, onCli
               />
             </div>
           )}
+          
+          {/* Website link */}
+          <div className="mt-3">
+            <a 
+              href={rentalUrl} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-primary flex items-center gap-1 hover:underline"
+            >
+              <ExternalLink className="h-4 w-4" />
+              <span>Visit rental website</span>
+            </a>
+          </div>
           
           {/* Last updated */}
           {rental.lastUpdated && (

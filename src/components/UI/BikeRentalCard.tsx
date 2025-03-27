@@ -1,5 +1,5 @@
 
-import { Clock, MapPin, Phone, Star, X, Info } from 'lucide-react';
+import { Clock, MapPin, Phone, Star, X, Info, ExternalLink } from 'lucide-react';
 import { BikeRental } from '@/types';
 import { cn } from '@/lib/utils';
 
@@ -9,6 +9,9 @@ interface BikeRentalCardProps {
 }
 
 const BikeRentalCard = ({ rental, onClose }: BikeRentalCardProps) => {
+  // Create a website URL for the rental (using a dummy URL if none provided)
+  const rentalUrl = `https://example.com/bike-rentals/${rental.id}`;
+  
   return (
     <div className="glass-card rounded-lg overflow-hidden">
       {/* Header with image if available */}
@@ -141,6 +144,19 @@ const BikeRentalCard = ({ rental, onClose }: BikeRentalCardProps) => {
             </div>
           </div>
         )}
+        
+        {/* Website link */}
+        <div className="mt-4">
+          <a 
+            href={rentalUrl} 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="text-primary flex items-center gap-1 hover:underline"
+          >
+            <ExternalLink className="h-4 w-4" />
+            <span>Visit rental website</span>
+          </a>
+        </div>
         
         {/* GPS coordinates */}
         <div className="text-xs text-muted-foreground mt-4 flex">

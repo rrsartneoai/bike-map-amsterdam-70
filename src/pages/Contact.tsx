@@ -1,9 +1,11 @@
+
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet';
+import { Link } from 'react-router-dom';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-import { Mail, MapPin, Phone } from 'lucide-react';
+import { Mail, MapPin, Phone, ArrowLeft } from 'lucide-react';
 
 interface ContactFormValues {
   name: string;
@@ -27,8 +29,13 @@ const Contact = () => {
 
   return (
     <div className="container mx-auto py-12 px-4 sm:px-6 lg:px-8">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      {/* Back to Map button */}
+      <Link to="/" className="inline-flex items-center text-primary hover:text-primary/80 mb-6 transition-colors">
+        <ArrowLeft className="mr-2 h-5 w-5" />
+        <span>Powrót do mapy</span>
+      </Link>
 
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Contact Information */}
         <div>
           <h2 className="text-2xl font-bold mb-4">Contact Us</h2>

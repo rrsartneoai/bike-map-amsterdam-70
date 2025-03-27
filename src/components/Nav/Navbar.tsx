@@ -8,7 +8,9 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 py-3">
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
           <div className="flex items-center gap-3">
-            <Bike className="h-8 w-auto text-green-500" />
+            <div className="bike-animation relative">
+              <Bike className="h-8 w-auto text-green-500" />
+            </div>
             <h1 className="text-xl font-semibold text-foreground">Rent a bike Amsterdam</h1>
           </div>
           

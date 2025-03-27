@@ -61,7 +61,7 @@ export const MOCK_BIKE_RENTALS: BikeRental[] = [
     ],
     amenities: ["Child seats", "Locks", "Maps"],
     rating: 4.5,
-    images: ["https://images.unsplash.com/photo-1485965120184-e220f721d03e?auto=format&fit=crop&w=600&q=80"],
+    images: ["https://images.unsplash.com/photo-1558980394-34764db076b4?auto=format&fit=crop&w=600&q=80"],
     lastUpdated: new Date().toISOString()
   },
   {
@@ -90,7 +90,7 @@ export const MOCK_BIKE_RENTALS: BikeRental[] = [
     ],
     amenities: ["Guided tours", "Helmets"],
     rating: 4.3,
-    images: ["https://images.unsplash.com/photo-1571068316344-75bc76f77890?auto=format&fit=crop&w=600&q=80"],
+    images: ["https://images.unsplash.com/photo-1597956158001-b9358a4353af?auto=format&fit=crop&w=600&q=80"],
     lastUpdated: new Date().toISOString()
   },
   {
@@ -117,7 +117,7 @@ export const MOCK_BIKE_RENTALS: BikeRental[] = [
     ],
     amenities: ["Baskets", "Budget friendly"],
     rating: 3.9,
-    images: ["https://images.unsplash.com/photo-1503669678209-c68d00b3765d?auto=format&fit=crop&w=600&q=80"],
+    images: ["https://images.unsplash.com/photo-1538895490524-0ded232a96d8?auto=format&fit=crop&w=600&q=80"],
     lastUpdated: new Date().toISOString()
   },
   {
@@ -148,7 +148,7 @@ export const MOCK_BIKE_RENTALS: BikeRental[] = [
     ],
     amenities: ["Scooters", "Cargo bikes", "Child seats"],
     rating: 4.1,
-    images: ["https://images.unsplash.com/photo-1507035895480-2b3156c31fc8?auto=format&fit=crop&w=600&q=80"],
+    images: ["https://images.unsplash.com/photo-1531604250646-2f0e818c4f06?auto=format&fit=crop&w=600&q=80"],
     lastUpdated: new Date().toISOString()
   },
   {
@@ -177,7 +177,7 @@ export const MOCK_BIKE_RENTALS: BikeRental[] = [
     ],
     amenities: ["Guided tours", "Locks", "Maps"],
     rating: 4.4,
-    images: ["https://images.unsplash.com/photo-1528629297340-d1d466945dc5?auto=format&fit=crop&w=600&q=80"],
+    images: ["https://images.unsplash.com/photo-1552323543-4cffa4ffffe3?auto=format&fit=crop&w=600&q=80"],
     lastUpdated: new Date().toISOString()
   }
 ];
