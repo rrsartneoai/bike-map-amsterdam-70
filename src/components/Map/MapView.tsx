@@ -148,7 +148,7 @@ const MapView: React.FC<MapViewProps> = ({
           }
 
           // Create bike types from available tags
-          const bikeTypes: Record<string, number] = {};
+          const bikeTypes: Record<string, number> = {};
           if (element.tags?.bicycle_types) {
             bikeTypes[element.tags.bicycle_types.toLowerCase()] = available;
           } else if (element.tags?.rental) {
