@@ -3,7 +3,6 @@ import React from 'react';
 import { Marker, Popup } from 'react-leaflet';
 import { Icon } from 'leaflet';
 import { BikeRental } from '@/types';
-import { Bike } from 'lucide-react';
 
 interface MapMarkerProps {
   rental: BikeRental;
@@ -24,6 +23,7 @@ const MapMarker: React.FC<MapMarkerProps> = ({ rental, isSelected = false, onCli
     iconSize: [30, 30],
     iconAnchor: [15, 30],
     popupAnchor: [0, -30],
+    className: isSelected ? 'selected-marker' : ''
   });
 
   // Format the bike availability to show in popup
@@ -34,17 +34,17 @@ const MapMarker: React.FC<MapMarkerProps> = ({ rental, isSelected = false, onCli
   };
 
   // Check if we have valid coordinates
-  const hasValidCoordinates = 
-    rental.location && 
-    typeof rental.location.lat === 'number' && 
-    typeof rental.location.lng === 'number' &&
-    !isNaN(rental.location.lat) && 
-    !isNaN(rental.location.lng);
-
-  if (!hasValidCoordinates) {
-    console.warn(`Invalid coordinates for rental ${rental.id}: `, rental.location);
+  if (!rental.location || 
+      typeof rental.location.lat !== 'number' || 
+      typeof rental.location.lng !== 'number' ||
+      isNaN(rental.location.lat) || 
+      isNaN(rental.location.lng)) {
+    console.warn(`Invalid coordinates for rental ${rental.id}:`, rental.location);
     return null;
   }
+
+  // Debug log to confirm marker creation
+  console.log(`Creating marker for rental ${rental.id} at [${rental.location.lat}, ${rental.location.lng}]`);
 
   return (
     <Marker

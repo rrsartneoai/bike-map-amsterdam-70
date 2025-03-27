@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef, useState } from 'react';
 import { MapContainer, TileLayer, useMap as useLeafletMap, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -60,6 +61,7 @@ const MapView: React.FC<MapViewProps> = ({
   const mapRef = useRef<L.Map | null>(null);
   const [allBikeRentals, setAllBikeRentals] = useState<BikeRental[]>([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // Default map center is Amsterdam
   const defaultCenter: [number, number] = [52.3676, 4.9041];
@@ -86,6 +88,7 @@ const MapView: React.FC<MapViewProps> = ({
     const fetchAllBikeRentals = async () => {
       try {
         setLoading(true);
+        setError(null);
         const query = `
           [out:json][timeout:60];
           area[name="Amsterdam"][admin_level=8]->.amsterdam;
@@ -189,7 +192,7 @@ const MapView: React.FC<MapViewProps> = ({
           }
 
           // Construct the rental object with proper typing
-          return {
+          const rental = {
             id: element.id.toString(),
             name: name,
             operator: operator,
@@ -206,13 +209,32 @@ const MapView: React.FC<MapViewProps> = ({
             amenities: amenities,
             lastUpdated: new Date().toISOString()
           };
+          
+          return rental;
         });
 
         console.log(`Found ${rentals.length} bike rentals in Amsterdam`);
+        
+        // Additional validation and debugging
+        const validRentalsCount = rentals.filter(r => 
+          r.location && 
+          typeof r.location.lat === 'number' && 
+          typeof r.location.lng === 'number' &&
+          !isNaN(r.location.lat) && 
+          !isNaN(r.location.lng)
+        ).length;
+        
+        console.log(`Valid rentals with coordinates: ${validRentalsCount} out of ${rentals.length}`);
+        
+        if (validRentalsCount === 0) {
+          toast.warning("No valid bike rental locations found");
+        }
+        
         setAllBikeRentals(rentals);
 
       } catch (error) {
         console.error('Error fetching bike rentals:', error);
+        setError(error instanceof Error ? error.message : 'Unknown error');
         toast.error('Failed to load all bike rental locations');
       } finally {
         setLoading(false);
@@ -237,8 +259,16 @@ const MapView: React.FC<MapViewProps> = ({
   const displayRentals = allBikeRentals.length > 0 ? allBikeRentals : bikeRentals;
   const rentalsToDisplay = validRentals(displayRentals);
 
+  // Log the rentals that will be displayed
+  useEffect(() => {
+    console.log(`Rentals to display: ${rentalsToDisplay.length}`);
+    if (rentalsToDisplay.length > 0) {
+      console.log('First rental:', rentalsToDisplay[0]);
+    }
+  }, [rentalsToDisplay]);
+
   return (
-    <div className="map-container">
+    <div className="map-container relative h-full w-full">
       <MapContainer
         center={center || defaultCenter}
         zoom={zoom || defaultZoom}
@@ -254,22 +284,45 @@ const MapView: React.FC<MapViewProps> = ({
         
         <MapController />
         
-        {!isLoading && !loading && rentalsToDisplay.map((rental) => (
-          <MapMarker
-            key={rental.id}
-            rental={rental}
-            isSelected={selectedRental?.id === rental.id}
-            onClick={handleMarkerClick}
-          />
-        ))}
+        {!isLoading && !loading && rentalsToDisplay.length > 0 && (
+          <>
+            {rentalsToDisplay.map((rental) => (
+              <MapMarker
+                key={rental.id}
+                rental={rental}
+                isSelected={selectedRental?.id === rental.id}
+                onClick={handleMarkerClick}
+              />
+            ))}
+          </>
+        )}
       </MapContainer>
       
-      {/* Loading indicator for Overpass API */}
+      {/* Loading indicator */}
       {loading && (
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50">
           <div className="flex items-center justify-center bg-white/80 backdrop-blur-sm p-3 rounded-lg">
             <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary mr-2"></div>
             <span className="text-sm font-medium">Loading bike stations...</span>
+          </div>
+        </div>
+      )}
+      
+      {/* Error message */}
+      {error && (
+        <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-50">
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+            <p>{error}</p>
+          </div>
+        </div>
+      )}
+      
+      {/* No results message */}
+      {!loading && !error && rentalsToDisplay.length === 0 && (
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50">
+          <div className="bg-white/80 backdrop-blur-sm p-4 rounded-lg shadow text-center">
+            <p className="font-medium">No bike rentals found</p>
+            <p className="text-sm text-muted-foreground mt-1">Try adjusting your filters or search criteria</p>
           </div>
         </div>
       )}
