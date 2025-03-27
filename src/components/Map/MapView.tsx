@@ -116,6 +116,7 @@ const MapView: React.FC<MapViewProps> = ({
         zoomControl={false}
         className="h-full w-full"
         ref={onMapInit}
+        closePopupOnClick={false} // Prevent popup from closing when clicking elsewhere
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

@@ -140,10 +140,12 @@ const Index = () => {
         onMarkerClick={handleMarkerClick}
       />
       
-      {/* UI Components - Search, Filter, etc. */}
-      <Navbar />
-      <SearchBar onSelect={handleSearchSelect} />
-      <FilterPanel onFilterChange={handleFilterChange} />
+      {/* UI Components - Search, Filter, etc. in a dedicated wrapper */}
+      <div className="fixed-ui-elements">
+        <Navbar />
+        <SearchBar onSelect={handleSearchSelect} />
+        <FilterPanel onFilterChange={handleFilterChange} />
+      </div>
       
       {/* Geolocation button */}
       <button
@@ -156,7 +158,7 @@ const Index = () => {
       
       {/* Loading indicator */}
       {(isLoading || isFetching) && (
-        <div className="fixed top-4 right-4 glass p-2 rounded-lg animate-fade-in">
+        <div className="fixed top-4 right-4 glass p-2 rounded-lg animate-fade-in z-[1002]">
           <div className="loader w-5 h-5"></div>
         </div>
       )}

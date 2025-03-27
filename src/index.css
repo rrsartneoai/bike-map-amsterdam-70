@@ -91,6 +91,26 @@
   background-color: white;
 }
 
+/* Ensure UI elements are displayed above the map */
+.map-container {
+  position: relative;
+  z-index: 1;
+}
+
+/* Fixed UI elements */
+.fixed-ui-elements {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1001; /* Higher than map components */
+  pointer-events: none; /* Allow interactions with the map */
+}
+
+.fixed-ui-elements > * {
+  pointer-events: auto; /* Re-enable interactions for UI children */
+}
+
 .location-btn {
   position: absolute;
   bottom: 6rem;
@@ -148,4 +168,26 @@
 
 .animate-slide-up {
   animation: slide-up 0.3s ease-out;
+}
+
+/* Fix for marker staying in place */
+.leaflet-marker-icon, .leaflet-marker-shadow {
+  transition: transform 0.3s ease;
+}
+
+/* Ensure Navbar is above map */
+nav.navbar {
+  z-index: 1002;
+  position: relative;
+}
+
+/* Ensure popups stay above everything */
+.leaflet-popup {
+  z-index: 1003 !important;
+}
+
+/* Make sure filter panel and search bar stay above map */
+.filter-panel, .search-bar {
+  z-index: 1002;
+  position: relative;
 }
