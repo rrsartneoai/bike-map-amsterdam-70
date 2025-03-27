@@ -1,9 +1,9 @@
-
 import React from 'react';
 import { Marker, Popup } from 'react-leaflet';
 import { Icon } from 'leaflet';
 import { BikeRental } from '@/types';
 import { Bike, MapPin, Clock, Star, Info, ExternalLink } from 'lucide-react';
+import { getRentalWebsiteUrl } from '@/lib/utils/rentalUtils';
 
 interface MapMarkerProps {
   rental: BikeRental;
@@ -18,7 +18,6 @@ const MapMarker: React.FC<MapMarkerProps> = ({ rental, isSelected = false, onCli
     }
   };
 
-  // Create a custom bike icon
   const bikeIcon = new Icon({
     iconUrl: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="${isSelected ? '#ef4444' : '#2563eb'}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -33,7 +32,6 @@ const MapMarker: React.FC<MapMarkerProps> = ({ rental, isSelected = false, onCli
     className: `bike-marker ${isSelected ? 'selected-marker' : ''}`
   });
 
-  // Check if we have valid coordinates
   if (!rental.location || 
       typeof rental.location.lat !== 'number' || 
       typeof rental.location.lng !== 'number' ||
@@ -43,29 +41,22 @@ const MapMarker: React.FC<MapMarkerProps> = ({ rental, isSelected = false, onCli
     return null;
   }
 
-  // Format coordinates to 6 decimal places
   const formattedLat = rental.location.lat.toFixed(6);
   const formattedLng = rental.location.lng.toFixed(6);
 
-  // Get a static map image from OpenStreetMap
   const getStationImage = () => {
-    // If rental has images, use the first one
     if (rental.images && rental.images.length > 0) {
       return rental.images[0];
     }
     
-    // Use OpenStreetMap static map image with marker
-    // We'll use the OpenStreetMap static map service provided by MapTiler
     const zoom = 16;
     const width = 300;
     const height = 200;
     
-    // Using publicly available static map service
     return `https://maps.geoapify.com/v1/staticmap?style=osm-carto&width=${width}&height=${height}&center=lonlat:${rental.location.lng},${rental.location.lat}&zoom=${zoom}&marker=lonlat:${rental.location.lng},${rental.location.lat};color:%232563eb;size:large&apiKey=15e7c8fc456e455ca57c464e9dbbf77e`;
   };
 
-  // Create a website URL for the rental (using a dummy URL if none provided)
-  const rentalUrl = `https://example.com/bike-rentals/${rental.id}`;
+  const rentalUrl = getRentalWebsiteUrl(rental.operator);
 
   return (
     <Marker
@@ -77,16 +68,13 @@ const MapMarker: React.FC<MapMarkerProps> = ({ rental, isSelected = false, onCli
     >
       <Popup className="bike-rental-popup">
         <div className="max-w-sm">
-          {/* Header with title */}
           <div className="font-medium text-lg mb-1">{rental.name}</div>
           
-          {/* ID and coordinates */}
           <div className="text-xs text-muted-foreground flex items-center gap-1">
             <span className="font-semibold">ID:</span> 
             <span>{rental.id}</span>
           </div>
           
-          {/* Address */}
           {rental.address && (
             <div className="text-sm mt-2 flex items-start gap-1">
               <MapPin className="h-4 w-4 text-muted-foreground flex-shrink-0 mt-0.5" />
@@ -94,13 +82,11 @@ const MapMarker: React.FC<MapMarkerProps> = ({ rental, isSelected = false, onCli
             </div>
           )}
           
-          {/* Coordinates */}
           <div className="text-xs text-muted-foreground mt-1 flex">
             <span className="font-semibold">GPS:</span> 
             <span className="ml-1">{formattedLat}, {formattedLng}</span>
           </div>
           
-          {/* Bike availability */}
           <div className="mt-3 bg-secondary/40 rounded-md p-2">
             <div className="text-sm font-medium mb-1">
               Available bikes: {rental.bikes.available} / {rental.bikes.total}
@@ -117,7 +103,6 @@ const MapMarker: React.FC<MapMarkerProps> = ({ rental, isSelected = false, onCli
             )}
           </div>
           
-          {/* Opening hours */}
           {rental.openingHours && rental.openingHours.length > 0 && (
             <div className="mt-3">
               <div className="flex items-center gap-1 text-sm font-medium mb-1">
@@ -135,7 +120,6 @@ const MapMarker: React.FC<MapMarkerProps> = ({ rental, isSelected = false, onCli
             </div>
           )}
           
-          {/* Prices */}
           {rental.prices && rental.prices.length > 0 && (
             <div className="mt-3">
               <div className="flex items-center gap-1 text-sm font-medium mb-1">
@@ -158,14 +142,12 @@ const MapMarker: React.FC<MapMarkerProps> = ({ rental, isSelected = false, onCli
             </div>
           )}
           
-          {/* Operator */}
           {rental.operator && (
             <div className="text-xs text-muted-foreground mt-3">
               <span className="font-semibold">Operator:</span> {rental.operator}
             </div>
           )}
           
-          {/* Amenities */}
           {rental.amenities && rental.amenities.length > 0 && (
             <div className="mt-3">
               <div className="text-sm font-medium mb-1">Amenities</div>
@@ -182,7 +164,6 @@ const MapMarker: React.FC<MapMarkerProps> = ({ rental, isSelected = false, onCli
             </div>
           )}
           
-          {/* Rating */}
           {rental.rating && (
             <div className="mt-3 flex items-center gap-1">
               <Star className="h-4 w-4 text-yellow-500 fill-yellow-500" />
@@ -190,7 +171,6 @@ const MapMarker: React.FC<MapMarkerProps> = ({ rental, isSelected = false, onCli
             </div>
           )}
           
-          {/* Image */}
           {rental.images && rental.images.length > 0 && (
             <div className="mt-3 w-full h-[150px] overflow-hidden rounded-md">
               <img 
@@ -198,14 +178,12 @@ const MapMarker: React.FC<MapMarkerProps> = ({ rental, isSelected = false, onCli
                 alt={`${rental.name} location`} 
                 className="w-full h-full object-cover"
                 onError={(e) => {
-                  // Fallback if the image fails to load
                   e.currentTarget.src = "https://placehold.co/300x150/e2e8f0/64748b?text=Location+preview+unavailable";
                 }}
               />
             </div>
           )}
           
-          {/* Website link */}
           <div className="mt-3">
             <a 
               href={rentalUrl} 
@@ -218,7 +196,6 @@ const MapMarker: React.FC<MapMarkerProps> = ({ rental, isSelected = false, onCli
             </a>
           </div>
           
-          {/* Last updated */}
           {rental.lastUpdated && (
             <div className="mt-3 text-xs text-muted-foreground">
               Last updated: {new Date(rental.lastUpdated).toLocaleString()}

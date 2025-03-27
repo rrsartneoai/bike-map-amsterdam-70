@@ -179,5 +179,37 @@ export const MOCK_BIKE_RENTALS: BikeRental[] = [
     rating: 4.4,
     images: ["https://images.unsplash.com/photo-1552323543-4cffa4ffffe3?auto=format&fit=crop&w=600&q=80"],
     lastUpdated: new Date().toISOString()
+  },
+  {
+    id: "rental-7",
+    name: "Swapfiets Amsterdam Central",
+    operator: "Swapfiets",
+    address: "Damrak 247, 1012 ZJ Amsterdam",
+    location: {
+      lat: 52.3734,
+      lng: 4.8935
+    },
+    bikes: {
+      total: 200,
+      available: 120,
+      types: {
+        "city": 80,
+        "electric": 40
+      }
+    },
+    openingHours: [
+      { days: "Monday-Friday", hours: "09:00-18:00" },
+      { days: "Saturday", hours: "10:00-17:00" },
+      { days: "Sunday", hours: "Closed" }
+    ],
+    prices: [
+      { type: "Original", price: "16.50", unit: "month", description: "City bike subscription" },
+      { type: "Deluxe", price: "19.50", unit: "month", description: "7-gear city bike subscription" },
+      { type: "Power", price: "75.00", unit: "month", description: "Electric bike subscription" }
+    ],
+    amenities: ["Repairs included", "Bike replacement", "Mobile app"],
+    rating: 4.6,
+    images: ["https://images.unsplash.com/photo-1582917606795-6c0061be1487?auto=format&fit=crop&w=600&q=80"],
+    lastUpdated: new Date().toISOString()
   }
 ];

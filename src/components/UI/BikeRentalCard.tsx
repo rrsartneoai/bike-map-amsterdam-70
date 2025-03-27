@@ -1,7 +1,7 @@
-
 import { Clock, MapPin, Phone, Star, X, Info, ExternalLink } from 'lucide-react';
 import { BikeRental } from '@/types';
 import { cn } from '@/lib/utils';
+import { getRentalWebsiteUrl } from '@/lib/utils/rentalUtils';
 
 interface BikeRentalCardProps {
   rental: BikeRental;
@@ -12,10 +12,8 @@ interface BikeRentalCardProps {
 const DEFAULT_BIKE_IMAGE = "https://images.unsplash.com/photo-1471506480208-91b3a4cc78be?auto=format&fit=crop&w=600&q=80";
 
 const BikeRentalCard = ({ rental, onClose }: BikeRentalCardProps) => {
-  // Create a website URL for the rental (using a dummy URL if none provided)
-  const rentalUrl = rental.operator?.toLowerCase().includes('ov-fiets') 
-    ? 'https://www.ns.nl/en/door-to-door/ov-fiets' 
-    : `https://example.com/bike-rentals/${rental.id}`;
+  // Get the appropriate website URL based on the operator
+  const rentalUrl = getRentalWebsiteUrl(rental.operator);
   
   return (
     <div className="glass-card rounded-lg overflow-hidden">
