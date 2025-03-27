@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Marker, Popup } from 'react-leaflet';
-import { Icon, DivIcon } from 'leaflet';
+import { DivIcon } from 'leaflet';
 import { BikeRental } from '@/types';
 import { Bike, Info, Clock, Phone, Globe } from 'lucide-react';
 
@@ -32,9 +32,9 @@ const getBikeAvailabilityBg = (available: number, total: number): string => {
 };
 
 const MapMarker: React.FC<MapMarkerProps> = ({ rental, isSelected = false, onClick }) => {
-  // Handle potential missing data
-  const availableBikes = rental.bikes?.available ?? 0;
-  const totalBikes = rental.bikes?.total ?? 0;
+  // Ensure the bikes object is properly defined and contains numeric values
+  const availableBikes = typeof rental.bikes?.available === 'number' ? rental.bikes.available : 0;
+  const totalBikes = typeof rental.bikes?.total === 'number' ? rental.bikes.total : 0;
   
   const availabilityColor = getBikeAvailabilityColor(
     availableBikes,
@@ -66,7 +66,7 @@ const MapMarker: React.FC<MapMarkerProps> = ({ rental, isSelected = false, onCli
             <path d="M15 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-3 11.5V14l-3-3 4-3 2 3h2"/>
           </svg>
         </div>
-        <div class="bike-count ${textColor}">${availableBikes || '?'}</div>
+        <div class="bike-count ${textColor}">${availableBikes}</div>
       </div>
     `;
 
@@ -104,21 +104,19 @@ const MapMarker: React.FC<MapMarkerProps> = ({ rental, isSelected = false, onCli
             )}
           </h3>
           
-          {(availableBikes !== undefined || totalBikes > 0) && (
-            <div className="mb-3 p-2 rounded bg-gray-50">
-              <p className="text-sm font-medium text-gray-900">
-                Available bikes: {availableBikes || '?'} / {totalBikes || '?'}
-              </p>
-              <div className="mt-1 h-2 w-full bg-gray-200 rounded-full overflow-hidden">
-                <div
-                  className={`h-full ${availableBikes > 0 ? 'bg-primary' : 'bg-red-500'}`}
-                  style={{
-                    width: `${totalBikes ? (availableBikes / totalBikes) * 100 : 0}%`
-                  }}
-                />
-              </div>
+          <div className="mb-3 p-2 rounded bg-gray-50">
+            <p className="text-sm font-medium text-gray-900">
+              Available bikes: {availableBikes} / {totalBikes}
+            </p>
+            <div className="mt-1 h-2 w-full bg-gray-200 rounded-full overflow-hidden">
+              <div
+                className={`h-full ${availableBikes > 0 ? 'bg-primary' : 'bg-red-500'}`}
+                style={{
+                  width: `${totalBikes ? (availableBikes / totalBikes) * 100 : 0}%`
+                }}
+              />
             </div>
-          )}
+          </div>
           
           <div className="space-y-1.5">
             <p className="text-sm text-gray-700">

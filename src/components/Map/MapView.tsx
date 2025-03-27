@@ -59,7 +59,7 @@ const MapView: React.FC<MapViewProps> = ({
 }) => {
   const { mapState, setSelectedRental } = useMap();
   const mapRef = useRef<L.Map | null>(null);
-  const [allBikeRentals, setAllBikeRentals] = useState<any[]>([]);
+  const [allBikeRentals, setAllBikeRentals] = useState<BikeRental[]>([]);
   const [loading, setLoading] = useState(false);
 
   // Default map center is Amsterdam
@@ -112,25 +112,39 @@ const MapView: React.FC<MapViewProps> = ({
           throw new Error('Invalid data received');
         }
 
-        const rentals = data.elements.map((element: any) => ({
-          id: element.id.toString(),
-          name: element.tags?.name || 'Bike Rental',
-          operator: element.tags?.operator || 'Unknown',
-          address: element.tags?.address,
-          location: {
-            lat: element.lat,
-            lng: element.lon
-          },
-          bikes: {
-            total: parseInt(element.tags?.capacity || '0'),
-            available: parseInt(element.tags?.available_bikes || '0'),
-            types: element.tags?.bicycle_types ? 
-              { [element.tags.bicycle_types]: parseInt(element.tags?.available_bikes || '0') } : 
-              { 'city': parseInt(element.tags?.available_bikes || '0') }
-          },
-          amenities: element.tags?.amenity ? [element.tags.amenity] : [],
-          lastUpdated: new Date().toISOString()
-        }));
+        const rentals = data.elements.map((element: any) => {
+          // Parse capacity and available bikes from tags
+          const capacity = parseInt(element.tags?.capacity || '0', 10);
+          const availableBikes = parseInt(element.tags?.available_bikes || '0', 10);
+          
+          // Determine bike types
+          let bikeTypes: Record<string, number> = {};
+          if (element.tags?.bicycle_types) {
+            const type = element.tags.bicycle_types.toLowerCase();
+            bikeTypes[type] = availableBikes || 1; // If available count not specified, assume at least 1
+          } else {
+            // Default to "city" bikes if no type specified
+            bikeTypes = { 'city': availableBikes || capacity || 1 };
+          }
+
+          return {
+            id: element.id.toString(),
+            name: element.tags?.name || 'Bike Rental',
+            operator: element.tags?.operator || 'Unknown',
+            address: element.tags?.address,
+            location: {
+              lat: element.lat,
+              lng: element.lon
+            },
+            bikes: {
+              total: capacity || 10, // Default to 10 if no capacity specified
+              available: availableBikes || (capacity > 0 ? Math.floor(capacity * 0.7) : 5), // Default to 70% of capacity or 5
+              types: bikeTypes
+            },
+            amenities: element.tags?.amenity ? [element.tags.amenity] : [],
+            lastUpdated: new Date().toISOString()
+          };
+        });
 
         console.log(`Found ${rentals.length} bike rentals in Amsterdam`);
         setAllBikeRentals(rentals);
@@ -157,11 +171,7 @@ const MapView: React.FC<MapViewProps> = ({
         scrollWheelZoom={true}
         zoomControl={false}
         className="h-full w-full"
-        ref={(map) => {
-          if (map) {
-            handleMapInit(map);
-          }
-        }}
+        ref={handleMapInit}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
