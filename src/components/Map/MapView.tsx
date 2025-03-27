@@ -112,36 +112,98 @@ const MapView: React.FC<MapViewProps> = ({
           throw new Error('Invalid data received');
         }
 
+        // Process the data from Overpass API
         const rentals = data.elements.map((element: any) => {
-          // Parse capacity and available bikes from tags
-          const capacity = parseInt(element.tags?.capacity || '0', 10);
-          const availableBikes = parseInt(element.tags?.available_bikes || '0', 10);
+          // Get the actual information from the Overpass API
+          const name = element.tags?.name || 'Bike Rental';
+          const operator = element.tags?.operator || element.tags?.network || 'Unknown';
           
-          // Determine bike types
-          let bikeTypes: Record<string, number> = {};
-          if (element.tags?.bicycle_types) {
-            const type = element.tags.bicycle_types.toLowerCase();
-            bikeTypes[type] = availableBikes || 1; // If available count not specified, assume at least 1
-          } else {
-            // Default to "city" bikes if no type specified
-            bikeTypes = { 'city': availableBikes || capacity || 1 };
+          // For bike counts, use the actual data when available
+          let available = 0;
+          let total = 0;
+          
+          if (element.tags?.capacity) {
+            total = parseInt(element.tags.capacity, 10) || 0;
           }
-
+          
+          if (element.tags?.available_bikes) {
+            available = parseInt(element.tags.available_bikes, 10) || 0;
+          } else if (total > 0) {
+            // Only estimate if we have a total and no available count
+            available = Math.floor(Math.random() * (total * 0.3) + (total * 0.5));
+          }
+          
+          // For empty capacity, provide a reasonable default based on the type
+          if (total === 0) {
+            if (element.tags?.bicycle_rental === 'shop' || 
+                element.tags?.shop === 'rental' || 
+                element.tags?.shop === 'bicycle') {
+              // Bike shops typically have more bikes
+              total = 20;
+              available = 15;
+            } else {
+              // Regular bike stations often have fewer
+              total = 10;
+              available = 6;
+            }
+          }
+          
+          // Create bike types from available tags
+          const bikeTypes: Record<string, number> = {};
+          if (element.tags?.bicycle_types) {
+            bikeTypes[element.tags.bicycle_types.toLowerCase()] = available;
+          } else if (element.tags?.rental) {
+            const types = element.tags.rental.split(';');
+            let typesTotal = available;
+            types.forEach((type: string, index: number) => {
+              const count = index === types.length - 1 ? typesTotal : Math.ceil(typesTotal / (types.length - index));
+              bikeTypes[type.trim()] = count;
+              typesTotal -= count;
+            });
+          } else {
+            // Default to city bikes if no type info available
+            bikeTypes['city'] = available;
+          }
+          
+          // Extract amenities from tags
+          const amenities: string[] = [];
+          if (element.tags?.service) {
+            amenities.push(element.tags.service);
+          }
+          if (element.tags?.['service:bicycle:repair'] === 'yes') {
+            amenities.push('Repair');
+          }
+          if (element.tags?.['service:bicycle:pump'] === 'yes') {
+            amenities.push('Pump');
+          }
+          
+          // Create the address
+          let address = '';
+          if (element.tags?.['addr:street'] && element.tags?.['addr:housenumber']) {
+            address = `${element.tags['addr:street']} ${element.tags['addr:housenumber']}`;
+            if (element.tags?.['addr:postcode']) {
+              address += `, ${element.tags['addr:postcode']}`;
+            }
+            if (element.tags?.['addr:city']) {
+              address += ` ${element.tags['addr:city']}`;
+            }
+          }
+          
           return {
             id: element.id.toString(),
-            name: element.tags?.name || 'Bike Rental',
-            operator: element.tags?.operator || 'Unknown',
-            address: element.tags?.address,
+            name: name,
+            operator: operator,
+            address: address || undefined,
             location: {
               lat: element.lat,
               lng: element.lon
             },
             bikes: {
-              total: capacity || 10, // Default to 10 if no capacity specified
-              available: availableBikes || (capacity > 0 ? Math.floor(capacity * 0.7) : 5), // Default to 70% of capacity or 5
+              total: total,
+              available: available,
               types: bikeTypes
             },
-            amenities: element.tags?.amenity ? [element.tags.amenity] : [],
+            amenities: amenities,
             lastUpdated: new Date().toISOString()
           };
         });
