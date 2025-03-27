@@ -43,23 +43,26 @@ const MapMarker: React.FC<MapMarkerProps> = ({ rental, isSelected = false, onCli
     return null;
   }
 
-  // Debug log to confirm marker creation
-  console.log(`Creating marker for rental ${rental.id} at [${rental.location.lat}, ${rental.location.lng}]`);
-
   // Format coordinates to 6 decimal places
   const formattedLat = rental.location.lat.toFixed(6);
   const formattedLng = rental.location.lng.toFixed(6);
 
-  // Get a static map image (placeholder or actual)
+  // Get a static map image from OpenStreetMap
   const getStationImage = () => {
+    // If rental has images, use the first one
     if (rental.images && rental.images.length > 0) {
       return rental.images[0];
     }
     
-    // If no image, use a static map image
-    const mapImageUrl = `https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/pin-s+2563eb(${rental.location.lng},${rental.location.lat})/${rental.location.lng},${rental.location.lat},15,0/300x200?access_token=pk.eyJ1IjoiZXhhbXBsZSIsImEiOiJjbGVhcnRleHQifQ.dGVlYXJfdGV4dA==`;
+    // Use OpenStreetMap static map image with marker
+    // We'll use the OpenStreetMap static map service provided by MapTiler
+    const zoom = 16;
+    const width = 300;
+    const height = 200;
+    const marker = `pin-l-bicycle+2563eb(${rental.location.lng},${rental.location.lat})`;
     
-    return mapImageUrl;
+    // Using publicly available static map service
+    return `https://maps.geoapify.com/v1/staticmap?style=osm-carto&width=${width}&height=${height}&center=lonlat:${rental.location.lng},${rental.location.lat}&zoom=${zoom}&marker=lonlat:${rental.location.lng},${rental.location.lat};color:%232563eb;size:large&apiKey=15e7c8fc456e455ca57c464e9dbbf77e`;
   };
 
   return (
@@ -122,11 +125,15 @@ const MapMarker: React.FC<MapMarkerProps> = ({ rental, isSelected = false, onCli
           </div>
         )}
         
-        <div className="mt-2 w-full h-24 overflow-hidden rounded">
+        <div className="mt-2 w-full h-[150px] overflow-hidden rounded">
           <img 
             src={getStationImage()} 
             alt={`${rental.name} location`} 
             className="w-full h-full object-cover"
+            onError={(e) => {
+              // Fallback if the image fails to load
+              e.currentTarget.src = "https://placehold.co/300x150/e2e8f0/64748b?text=Location+preview+unavailable";
+            }}
           />
         </div>
       </Popup>
