@@ -8,9 +8,14 @@ interface BikeRentalCardProps {
   onClose: () => void;
 }
 
+// Default bike rental image to use when no image is available
+const DEFAULT_BIKE_IMAGE = "https://images.unsplash.com/photo-1471506480208-91b3a4cc78be?auto=format&fit=crop&w=600&q=80";
+
 const BikeRentalCard = ({ rental, onClose }: BikeRentalCardProps) => {
   // Create a website URL for the rental (using a dummy URL if none provided)
-  const rentalUrl = `https://example.com/bike-rentals/${rental.id}`;
+  const rentalUrl = rental.operator?.toLowerCase().includes('ov-fiets') 
+    ? 'https://www.ns.nl/en/door-to-door/ov-fiets' 
+    : `https://example.com/bike-rentals/${rental.id}`;
   
   return (
     <div className="glass-card rounded-lg overflow-hidden">
@@ -24,7 +29,11 @@ const BikeRentalCard = ({ rental, onClose }: BikeRentalCardProps) => {
           />
         ) : (
           <div className="w-full h-full bg-muted flex items-center justify-center">
-            <div className="text-muted-foreground">No image available</div>
+            <img 
+              src={DEFAULT_BIKE_IMAGE} 
+              alt="Amsterdam Bicycle" 
+              className="h-full w-full object-cover"
+            />
           </div>
         )}
         

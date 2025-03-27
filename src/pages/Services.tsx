@@ -1,71 +1,66 @@
-
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { Link } from 'react-router-dom';
 import { 
   Train, Bus, Bike, RefreshCcw, Clock, MapPin, 
-  BarChart4, Calendar, ArrowRight 
+  BarChart4, Calendar, ArrowRight, AlertCircle, Info
 } from 'lucide-react';
 import Navbar from '@/components/Nav/Navbar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { fetchBikeRentals } from '@/lib/api';
+import { Badge } from '@/components/ui/badge';
+import { fetchBikeRentals, fetchBicycleNetworkRoutes, fetchOVFietsLocations } from '@/lib/api';
 import { BikeRental } from '@/types';
 
 const Services = () => {
   const [bikeRentals, setBikeRentals] = useState<BikeRental[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [publicTransportData, setPublicTransportData] = useState({
-    train: [
-      { id: 'tr1', destination: 'Utrecht Centraal', departureTime: '10:15', platform: '2a', delay: 0 },
-      { id: 'tr2', destination: 'Rotterdam Centraal', departureTime: '10:22', platform: '5b', delay: 5 },
-      { id: 'tr3', destination: 'Schiphol Airport', departureTime: '10:30', platform: '1', delay: 0 },
-    ],
-    tram: [
-      { id: 'tm1', line: '2', destination: 'Nieuw Sloten', departureTime: '10:05', stop: 'Centraal Station', delay: 2 },
-      { id: 'tm2', line: '4', destination: 'Station RAI', departureTime: '10:08', stop: 'Centraal Station', delay: 0 },
-      { id: 'tm3', line: '14', destination: 'Flevopark', departureTime: '10:12', stop: 'Centraal Station', delay: 0 },
-    ],
-    bus: [
-      { id: 'bs1', line: '32', destination: 'Muiderpoortstation', departureTime: '10:10', stop: 'Centraal Station', delay: 0 },
-      { id: 'bs2', line: '48', destination: 'Station Sloterdijk', departureTime: '10:15', stop: 'Centraal Station', delay: 3 },
-      { id: 'bs3', line: '22', destination: 'Indische Buurt', departureTime: '10:20', stop: 'Centraal Station', delay: 0 },
-    ]
-  });
+  const [bicycleNetworkData, setBicycleNetworkData] = useState<any>(null);
+  const [ovFietsLocations, setOVFietsLocations] = useState<BikeRental[]>([]);
   
   const [lastUpdated, setLastUpdated] = useState<string>(new Date().toLocaleTimeString());
   
-  // Fetch bike rentals data
   useEffect(() => {
-    const loadBikeRentals = async () => {
+    const loadData = async () => {
       try {
         setIsLoading(true);
-        const response = await fetchBikeRentals();
-        if (response && response.data) {
-          // Sort by availability (highest first)
-          const sortedRentals = [...response.data].sort((a, b) => 
+        
+        const [rentalsResponse, networkData, ovFietsData] = await Promise.all([
+          fetchBikeRentals(),
+          fetchBicycleNetworkRoutes(),
+          fetchOVFietsLocations()
+        ]);
+        
+        if (rentalsResponse && rentalsResponse.data) {
+          const sortedRentals = [...rentalsResponse.data].sort((a, b) => 
             b.bikes.available - a.bikes.available
-          ).slice(0, 5); // Get top 5 with most availability
+          ).slice(0, 5);
           
           setBikeRentals(sortedRentals);
         }
+        
+        if (networkData) {
+          setBicycleNetworkData(networkData);
+        }
+        
+        if (ovFietsData) {
+          setOVFietsLocations(ovFietsData.slice(0, 3));
+        }
       } catch (error) {
-        console.error('Error fetching bike rentals:', error);
-        toast.error('Failed to load bike rental data');
+        console.error('Error fetching data:', error);
+        toast.error('Failed to load transportation data');
       } finally {
         setIsLoading(false);
       }
     };
     
-    loadBikeRentals();
+    loadData();
   }, []);
   
-  // Mock function to refresh data
   const handleRefresh = () => {
     toast.loading('Refreshing data...');
     
-    // Simulate API call
     setTimeout(() => {
       setLastUpdated(new Date().toLocaleTimeString());
       toast.dismiss();
@@ -83,6 +78,18 @@ const Services = () => {
           <p className="text-muted-foreground mt-2">
             Integrated information about public transport and bike rental availability in Amsterdam
           </p>
+          
+          <div className="flex flex-wrap gap-2 mt-3">
+            <Badge variant="outline" className="flex items-center gap-1 text-xs">
+              <Info className="h-3 w-3" /> 
+              OV-fiets API
+            </Badge>
+            <Badge variant="outline" className="flex items-center gap-1 text-xs">
+              <Info className="h-3 w-3" /> 
+              Amsterdam Bicycle Network API
+            </Badge>
+          </div>
+          
           <div className="flex items-center gap-2 mt-4 text-sm text-muted-foreground">
             <Clock className="h-4 w-4" />
             <span>Last updated: {lastUpdated}</span>
@@ -94,7 +101,6 @@ const Services = () => {
         </header>
         
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Public Transport Departures */}
           <div className="lg:col-span-2">
             <Card>
               <CardHeader>
@@ -219,7 +225,60 @@ const Services = () => {
               </CardContent>
             </Card>
             
-            {/* Mobility Integration Cards */}
+            <Card className="mt-6">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Bike className="h-5 w-5 text-green-500" />
+                  Amsterdam Bicycle Network
+                </CardTitle>
+                <CardDescription>
+                  Information from Ministry of Interior and Kingdom of Netherlands API
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {isLoading ? (
+                  <div className="flex justify-center p-6">
+                    <div className="loader"></div>
+                  </div>
+                ) : bicycleNetworkData ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-3">
+                      <h3 className="text-sm font-medium">Network Information</h3>
+                      <div className="grid grid-cols-2 gap-2 text-sm">
+                        <div className="bg-secondary/50 p-3 rounded">
+                          <p className="font-medium">Main Network</p>
+                          <p className="text-xs text-muted-foreground">{bicycleNetworkData.mainNetwork.routes} routes</p>
+                          <p className="text-xs text-muted-foreground">{bicycleNetworkData.mainNetwork.totalLength} km total</p>
+                        </div>
+                        <div className="bg-secondary/50 p-3 rounded">
+                          <p className="font-medium">Regional Network</p>
+                          <p className="text-xs text-muted-foreground">{bicycleNetworkData.regionalNetwork.routes} routes</p>
+                          <p className="text-xs text-muted-foreground">{bicycleNetworkData.regionalNetwork.totalLength} km total</p>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-3">
+                      <h3 className="text-sm font-medium">Busiest Cycling Routes</h3>
+                      <div className="space-y-2">
+                        {bicycleNetworkData.busiestRoutes.map((route: any) => (
+                          <div key={route.id} className="bg-secondary/50 p-3 rounded flex justify-between items-center">
+                            <p className="text-sm">{route.name}</p>
+                            <Badge variant="secondary">{route.avgCyclists.toLocaleString()} cyclists/day</Badge>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="p-6 text-center text-muted-foreground">
+                    <AlertCircle className="h-8 w-8 mx-auto mb-2" />
+                    <p>Failed to load bicycle network data</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+            
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
               <Card>
                 <CardHeader className="pb-2">
@@ -292,7 +351,6 @@ const Services = () => {
             </div>
           </div>
           
-          {/* Bike Rental Availability */}
           <div>
             <Card>
               <CardHeader>
@@ -301,7 +359,7 @@ const Services = () => {
                   Bike Availability
                 </CardTitle>
                 <CardDescription>
-                  Top 5 rental locations with highest bike availability
+                  Top rental locations with highest bike availability
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -353,7 +411,62 @@ const Services = () => {
               </CardFooter>
             </Card>
             
-            {/* Quick Info */}
+            <Card className="mt-6">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Train className="h-5 w-5 text-blue-500" />
+                  OV-fiets at Train Stations
+                </CardTitle>
+                <CardDescription>
+                  Dutch Railways bike rental availability
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {isLoading ? (
+                  <div className="flex justify-center p-4">
+                    <div className="loader"></div>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {ovFietsLocations.map(location => (
+                      <div key={location.id} className="border rounded-md p-3 hover:bg-muted/20 transition-colors">
+                        <div className="flex justify-between items-start">
+                          <h4 className="font-medium text-sm">{location.name}</h4>
+                          <div className="bg-blue-500/10 text-blue-500 px-2 py-0.5 rounded text-xs font-medium">
+                            {location.bikes.available} available
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
+                          <MapPin className="h-3 w-3" />
+                          <span>{location.address || 'Amsterdam'}</span>
+                        </div>
+                        
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          className="w-full mt-2 text-xs py-1"
+                          asChild
+                        >
+                          <Link to={`/?rental=${location.id}`}>View on map</Link>
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+              <CardFooter className="pt-1">
+                <a 
+                  href="https://www.ns.nl/en/door-to-door/ov-fiets" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-xs text-primary hover:underline w-full text-center"
+                >
+                  Learn more about OV-fiets
+                </a>
+              </CardFooter>
+            </Card>
+            
             <Card className="mt-6">
               <CardHeader className="pb-2">
                 <CardTitle className="text-lg">Urban Mobility Data</CardTitle>

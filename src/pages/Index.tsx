@@ -9,7 +9,7 @@ import FilterPanel from '@/components/Filters/FilterPanel';
 import BikeRentalCard from '@/components/UI/BikeRentalCard';
 import Navbar from '@/components/Nav/Navbar';
 import useMap from '@/hooks/useMap';
-import { fetchBikeRentals, getBikeRentalDetails } from '@/lib/api';
+import { fetchBikeRentals, getBikeRentalDetails, fetchOVFietsLocations } from '@/lib/api';
 import { BikeRental, FilterOptions, SearchResult } from '@/types';
 
 const Index = () => {
@@ -30,17 +30,33 @@ const Index = () => {
     setSelectedRental
   } = useMap();
   
-  // Fetch bike rentals data
+  // Fetch standard bike rentals data
   const { 
     data: bikeRentalsData,
-    isLoading,
-    error,
-    isFetching
+    isLoading: isLoadingStandardRentals,
+    error: standardRentalsError,
+    isFetching: isFetchingStandard
   } = useQuery({
     queryKey: ['bikeRentals'],
     queryFn: fetchBikeRentals,
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
+  
+  // Fetch OV-fiets locations
+  const {
+    data: ovFietsData,
+    isLoading: isLoadingOVFiets,
+    error: ovFietsError,
+    isFetching: isFetchingOVFiets
+  } = useQuery({
+    queryKey: ['ovFietsLocations'],
+    queryFn: fetchOVFietsLocations,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+  
+  // Combined loading state
+  const isLoading = isLoadingStandardRentals || isLoadingOVFiets;
+  const isFetching = isFetchingStandard || isFetchingOVFiets;
   
   // Apply filters to bike rentals
   const applyFilters = useCallback((rentals: BikeRental[], filters: FilterOptions) => {
@@ -145,20 +161,38 @@ const Index = () => {
     }
   };
   
-  // Update filtered rentals when data changes
+  // Combine standard rentals and OV-fiets locations
   useEffect(() => {
+    let allRentals: BikeRental[] = [];
+    
     if (bikeRentalsData?.data) {
-      setFilteredRentals(bikeRentalsData.data);
+      allRentals = [...bikeRentalsData.data];
     }
-  }, [bikeRentalsData]);
+    
+    if (ovFietsData) {
+      // Add OV-fiets locations to all rentals
+      allRentals = [...allRentals, ...ovFietsData];
+    }
+    
+    setFilteredRentals(allRentals);
+    
+    if (allRentals.length > 0) {
+      console.log(`Combined ${bikeRentalsData?.data?.length || 0} standard rentals with ${ovFietsData?.length || 0} OV-fiets locations`);
+    }
+  }, [bikeRentalsData, ovFietsData]);
   
   // Show error toast if API fails
   useEffect(() => {
-    if (error) {
-      toast.error('Failed to load bike rental data');
-      console.error('API Error:', error);
+    if (standardRentalsError) {
+      toast.error('Failed to load standard bike rental data');
+      console.error('API Error:', standardRentalsError);
     }
-  }, [error]);
+    
+    if (ovFietsError) {
+      toast.error('Failed to load OV-fiets locations');
+      console.error('API Error:', ovFietsError);
+    }
+  }, [standardRentalsError, ovFietsError]);
   
   return (
     <div className="h-screen w-full overflow-hidden relative">
