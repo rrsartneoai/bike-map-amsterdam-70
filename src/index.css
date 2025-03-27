@@ -174,7 +174,7 @@
 
 .leaflet-control-zoom-in,
 .leaflet-control-zoom-out {
-  @apply !text-foreground !border-border/50 !hover:bg-secondary/80 transition-colors;
+  @apply !text-foreground !border-border/50 hover:!bg-secondary/80 transition-colors;
 }
 
 .leaflet-control-attribution {
