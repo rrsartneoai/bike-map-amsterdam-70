@@ -5,7 +5,7 @@
 
 Amsterdam Bike Map is an interactive web application that helps users find and navigate bike rental options throughout Amsterdam. The application provides a comprehensive view of available bike rental locations, real-time availability, and additional information to make renting a bike in Amsterdam as easy as possible.
 
-![Amsterdam Bike Map Preview](https://images.unsplash.com/photo-1613582387117-cfa42d3423e9?auto=format&fit=crop&w=1280&q=80)
+#Amsterdam Bike Map Preview (https://images.unsplash.com/photo-1613582387117-cfa42d3423e9?auto=format&fit=crop&w=1280&q=80)](https://bike-map-amsterdam-70.lovable.app/)
 
 ## Table of Contents
 
