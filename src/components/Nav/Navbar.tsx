@@ -1,6 +1,6 @@
 
 import { Link } from 'react-router-dom';
-import { MapPin, Info, Phone, Bike, Layers } from 'lucide-react';
+import { MapPin, Info, Phone, Bike, Layers, Train } from 'lucide-react';
 
 const Navbar = () => {
   return (
@@ -21,6 +21,14 @@ const Navbar = () => {
             >
               <MapPin className="w-5 h-5" />
               <span>Map</span>
+            </Link>
+            
+            <Link 
+              to="/services"
+              className="flex items-center gap-2 text-foreground hover:text-primary transition-colors"
+            >
+              <Train className="w-5 h-5" />
+              <span>Services</span>
             </Link>
             
             <Link 

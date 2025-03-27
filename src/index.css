@@ -244,3 +244,67 @@ nav.navbar {
   z-index: 1002;
   position: relative;
 }
+
+/* Transport services page styling */
+.transport-table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.transport-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: var(--background);
+}
+
+/* Chart styling */
+.chart-bar {
+  transition: height 0.3s ease;
+}
+
+.chart-bar:hover {
+  opacity: 0.8;
+}
+
+/* Public transport icons */
+.train-icon {
+  color: #1a56db;
+}
+
+.tram-icon {
+  color: #16a34a;
+}
+
+.bus-icon {
+  color: #ca8a04;
+}
+
+/* Multimodal journey visualization */
+.journey-line {
+  position: relative;
+  width: 2px;
+  background-color: var(--border);
+  margin: 0 auto;
+}
+
+.journey-line::before,
+.journey-line::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.journey-line::before {
+  top: 0;
+  background-color: var(--primary);
+}
+
+.journey-line::after {
+  bottom: 0;
+  background-color: var(--primary);
+}
