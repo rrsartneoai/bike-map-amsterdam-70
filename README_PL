@@ -1,0 +1,252 @@
+Amsterdam Bike Map - Mapa Rowerowa Amsterdamu
+
+
+```markdown
+# 🚲 Amsterdam Bike Map - Mapa Rowerowa Amsterdamu
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) <!-- Możesz dodać inne badge, np. status builda, wersje technologii -->
+[![React](https://img.shields.io/badge/React-^18-blue)](https://reactjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-^5-blue)](https://www.typescriptlang.org/)
+[![Vite](https://img.shields.io/badge/Vite-^5-purple)](https://vitejs.dev/)
+<!-- Dodaj więcej badge, np. dla Tailwind CSS, biblioteki mapowej -->
+
+Interaktywna aplikacja webowa ułatwiająca znajdowanie i nawigację do punktów wynajmu rowerów w Amsterdamie. Aplikacja zapewnia kompleksowy widok dostępnych lokalizacji, informacje o dostępności w czasie rzeczywistym oraz dodatkowe dane, aby wynajem roweru w Amsterdamie był jak najprostszy.
+
+[![Podgląd Amsterdam Bike Map](https://images.unsplash.com/photo-1613582387117-cfa42d3423e9?auto=format&fit=crop&w=1280&q=80)](https://bike-map-amsterdam-70.lovable.app/)
+*Kliknij w obrazek, aby zobaczyć działającą wersję demo.*
+
+## 📋 Spis Treści
+
+1.  [Opis Projektu](#-opis-projektu)
+2.  [Główne Funkcje](#-główne-funkcje)
+3.  [Użyte Technologie](#️-użyte-technologie)
+4.  [Pierwsze Kroki](#-pierwsze-kroki)
+    *   [Wymagania Wstępne](#wymagania-wstępne)
+    *   [Instalacja](#️-instalacja)
+    *   [Uruchomienie](#️-uruchomienie)
+    *   [Zmienne Środowiskowe](#-zmienne-środowiskowe)
+5.  [Struktura Projektu](#-struktura-projektu)
+6.  [Główne Funkcjonalności](#-główne-funkcjonalności)
+7.  [API i Źródła Danych](#-api-i-źródła-danych)
+8.  [Kluczowe Komponenty](#-kluczowe-komponenty)
+9.  [Plany Rozwoju](#-plany-rozwoju)
+10. [Wkład (Contributing)](#-wkład-contributing)
+11. [Licencja](#-licencja)
+
+## 🌟 Opis Projektu
+
+Amsterdam Bike Map to interaktywna aplikacja webowa stworzona, aby pomóc użytkownikom w znajdowaniu i korzystaniu z opcji wynajmu rowerów na terenie Amsterdamu. Aplikacja wizualizuje lokalizacje wypożyczalni, dostarcza informacji o dostępności rowerów w czasie rzeczywistym i oferuje funkcje filtrowania, aby ułatwić wybór najlepszej opcji. Celem projektu jest stworzenie centralnego punktu dla rowerzystów szukających wygodnego sposobu na poruszanie się po mieście.
+
+## ✨ Główne Funkcje
+
+*   🗺️ **Interaktywna Mapa**: Wizualizacja wszystkich lokalizacji wynajmu rowerów w Amsterdamie.
+*   ⏱️ **Dostępność w Czasie Rzeczywistym**: Sprawdzanie aktualnej liczby dostępnych rowerów w punktach wynajmu (tam, gdzie API na to pozwala).
+*   ⚙️ **System Filtrowania**: Filtrowanie lokalizacji według typu roweru (miejski, elektryczny, cargo), operatora (OV-fiets, MacBike), udogodnień (kaski, foteliki) i ceny.
+*   🔍 **Wyszukiwanie Lokalizacji**: Znajdowanie punktów wynajmu w pobliżu określonych adresów lub punktów orientacyjnych.
+*   ℹ️ **Szczegóły Wynajmu**: Wyświetlanie kompleksowych informacji o każdej lokalizacji (adres, godziny otwarcia, cennik, udogodnienia, operator, opinie).
+*   📍 **Lokalizacja Użytkownika**: Możliwość zlokalizowania siebie na mapie, aby znaleźć najbliższe opcje wynajmu.
+*   🤝 **Integracja z Wieloma Usługami**: Obsługa danych z różnych systemów, w tym OV-fiets, MacBike, Yellow Bike, Swapfiets i innych.
+*   🚌 **Integracja z Transportem Publicznym**: Wyświetlanie opcji transportu publicznego w powiązaniu z punktami wynajmu rowerów.
+
+## 🛠️ Użyte Technologie
+
+*   **Framework/Biblioteka:** [React](https://reactjs.org/)
+*   **Język:** [TypeScript](https://www.typescriptlang.org/)
+*   **Narzędzie Budowania / Serwer Deweloperski:** [Vite](https://vitejs.dev/)
+*   **Styling:** (Np. Tailwind CSS, CSS Modules, Styled Components - uzupełnij zgodnie ze stanem faktycznym)
+*   **Zarządzanie Stanem:** (Np. Context API, Zustand, Redux Toolkit - uzupełnij)
+*   **Biblioteka Map:** (Np. Mapbox GL JS, Leaflet, MapLibre GL JS - uzupełnij)
+*   **Menadżer Pakietów:** npm / yarn
+
+## 🚀 Pierwsze Kroki
+
+### Wymagania Wstępne
+
+*   Node.js (zalecana wersja 16 lub nowsza)
+*   npm lub yarn
+
+### ⚙️ Instalacja
+
+```bash
+# 1. Sklonuj repozytorium
+git clone <URL_TWOJEGO_REPOZYTORIUM>
+# Przykład: git clone https://github.com/twoj-uzytkownik/amsterdam-bike-map.git
+
+# 2. Przejdź do katalogu projektu
+cd amsterdam-bike-map
+
+# 3. Zainstaluj zależności
+npm install
+# lub
+yarn install
+```
+
+### ▶️ Uruchomienie
+
+```bash
+# Uruchom serwer deweloperski z hot-reloading
+npm run dev
+# lub
+yarn dev
+```
+
+Aplikacja będzie dostępna pod adresem `http://localhost:5173` (domyślny port Vite).
+
+### 🔑 Zmienne Środowiskowe
+
+Obecnie aplikacja korzysta z danych mockowych (przykładowych) i nie wymaga konfiguracji zmiennych środowiskowych do podstawowego działania. W przyszłości, przy integracji z rzeczywistymi API, może być konieczne dodanie pliku `.env` z kluczami API.
+
+## 📁 Struktura Projektu
+
+Projekt jest zorganizowany w następujący sposób:
+
+```
+amsterdam-bike-map/
+├── public/              # Zasoby statyczne
+├── src/
+│   ├── assets/          # Obrazy, ikony, czcionki
+│   ├── components/      # Komponenty UI (wielokrotnego użytku)
+│   │   ├── common/      # Ogólne komponenty (przyciski, inputy)
+│   │   ├── map/         # Komponenty związane z mapą
+│   │   └── features/    # Komponenty specyficzne dla funkcji (np. panel filtrów)
+│   ├── hooks/           # Customowe hooki React
+│   ├── lib/             # Funkcje pomocnicze, logika API, konfiguracje
+│   ├── pages/           # Komponenty reprezentujące strony/widoki aplikacji (jeśli używasz routera)
+│   ├── services/        # Logika komunikacji z API
+│   ├── store/           # Zarządzanie stanem globalnym (jeśli używane)
+│   ├── styles/          # Globalne style, motywy
+│   └── types/           # Definicje typów TypeScript
+├── .env.example         # Przykładowy plik zmiennych środowiskowych
+├── index.html           # Główny plik HTML
+├── package.json         # Zależności i skrypty projektu
+├── tsconfig.json        # Konfiguracja TypeScript
+└── vite.config.ts       # Konfiguracja Vite
+```
+*(Struktura może się nieznacznie różnić w zależności od ewolucji projektu)*
+
+## 🧭 Główne Funkcjonalności
+
+### 1. Mapa Wynajmu Rowerów
+
+Rdzeniem aplikacji jest interaktywna mapa wyświetlająca punkty wynajmu rowerów w Amsterdamie. Każda lokalizacja jest oznaczona markerem, który po kliknięciu dostarcza podstawowych informacji lub otwiera panel szczegółów.
+
+### 2. System Filtrowania i Wyszukiwania
+
+Użytkownicy mogą dynamicznie filtrować widoczne na mapie lokalizacje na podstawie:
+*   **Typów rowerów:** np. miejskie, elektryczne, cargo.
+*   **Operatorów:** np. OV-fiets, MacBike, Yellow Bike.
+*   **Dostępnych udogodnień:** np. kaski, foteliki dziecięce.
+*   **Zakresu cenowego.**
+*   **Aktualnej dostępności rowerów.**
+Funkcja wyszukiwania pozwala szybko znaleźć wypożyczalnie w pobliżu konkretnego miejsca.
+
+### 3. Szczegóły Lokalizacji Wynajmu
+
+Dla każdej wybranej lokalizacji aplikacja prezentuje szczegółowe informacje, w tym:
+*   Nazwę i dokładny adres.
+*   Aktualną dostępność rowerów (jeśli dane są dostępne).
+*   Godziny otwarcia.
+*   Informacje o cenach i taryfach.
+*   Listę dostępnych udogodnień.
+*   Dane operatora.
+*   Oceny użytkowników (w przyszłości).
+*   Bezpośredni link do strony internetowej operatora.
+
+### 4. Integracja z Usługami Transportowymi
+
+Aplikacja integruje dane z różnych źródeł, aby zapewnić kompleksowy obraz mobilności:
+*   Lokalizacje i dostępność rowerów **OV-fiets** (system rowerów publicznych kolei holenderskich).
+*   Informacje o odjazdach transportu publicznego w pobliżu wypożyczalni (w przyszłości).
+*   Możliwość obliczania tras rowerowych (w przyszłości).
+
+## 🔌 API i Źródła Danych
+
+Aplikacja korzysta lub planuje korzystać z następujących źródeł danych:
+
+1.  **API OV-fiets**: Dostępność rowerów OV-fiets na stacjach w czasie rzeczywistym.
+2.  **API Amsterdam Open Data (lub podobne)**: Dane dotyczące infrastruktury rowerowej, sieci tras.
+3.  **API Transportu Publicznego (np. 9292, NS API)**: Informacje o rozkładach jazdy i usługach transportu publicznego.
+4.  **Dane od komercyjnych wypożyczalni**: Informacje o lokalizacjach, ofercie i cenach (mogą wymagać scrapingu lub dedykowanych API, jeśli dostępne).
+5.  **Dane mapowe**: Np. OpenStreetMap przez Mapbox/MapLibre/Leaflet.
+
+## 🧩 Kluczowe Komponenty
+
+### Komponenty Mapy
+
+*   `MapView`: Główny komponent wyświetlający mapę.
+*   `MapMarker`: Komponent reprezentujący pojedynczy marker na mapie (wypożyczalnię).
+*   `LayerControl`: Kontrolki do przełączania widoczności różnych warstw mapy (np. trasy rowerowe, punkty OV-fiets).
+*   `UserLocationMarker`: Marker pokazujący aktualną pozycję użytkownika.
+
+### Komponenty Filtrowania
+
+*   `FilterPanel`: Interfejs użytkownika do wyboru kryteriów filtrowania.
+*   `SearchBar`: Pole wyszukiwania lokalizacji lub nazw wypożyczalni.
+*   `FilterChips`: Wizualizacja aktywnych filtrów.
+
+### Komponenty Interfejsu Użytkownika
+
+*   `BikeRentalCard` / `LocationDetailsPanel`: Komponent wyświetlający szczegółowe informacje o wybranej wypożyczalni.
+*   `Navbar`: Główny pasek nawigacyjny aplikacji (jeśli dotyczy).
+*   `LoadingSpinner` / `SkeletonLoader`: Wskaźniki ładowania danych.
+
+## 🌱 Plany Rozwoju
+
+Istnieje wiele możliwości rozbudowy i ulepszenia aplikacji Amsterdam Bike Map:
+
+### Potencjalne Ulepszenia
+
+1.  👤 **Konta Użytkowników i Preferencje**:
+    *   Zapisywanie ulubionych lokalizacji.
+    *   Ustawianie domyślnych filtrów.
+    *   Historia wynajmu.
+2.  💳 **Bezpośrednia Integracja Rezerwacji**:
+    *   Możliwość rezerwacji rowerów bezpośrednio przez aplikację.
+    *   Integracja z systemami płatności.
+3.  🗺️ **Planowanie Tras Rowerowych**:
+    *   Planowanie tras z nawigacją "krok po kroku".
+    *   Integracja z popularnymi aplikacjami nawigacyjnymi.
+    *   Uwzględnianie profilu wysokości, typu nawierzchni, bezpieczeństwa trasy.
+4.  📱 **Aplikacje Mobilne**:
+    *   Natywne aplikacje dla iOS i Android.
+    *   Funkcjonalność map offline.
+5.  🌍 **Rozszerzony Zasięg**:
+    *   Dodanie innych miast w Holandii lub Europie.
+    *   Włączenie większej liczby dostawców usług wynajmu.
+6.  🌦️ **Integracja z Pogodą w Czasie Rzeczywistym**:
+    *   Wyświetlanie aktualnych i prognozowanych warunków pogodowych.
+    *   Rekomendacje tras w zależności od pogody.
+7.  💬 **Funkcje Społecznościowe**:
+    *   Opinie i oceny użytkowników dla punktów wynajmu.
+    *   Możliwość dodawania zdjęć i wskazówek przez użytkowników.
+    *   Zgłaszanie problemów z lokalizacjami lub rowerami przez społeczność.
+8.  📊 **Zaawansowana Analityka**:
+    *   Mapy ciepła pokazujące popularne obszary rowerowe.
+    *   Analiza wzorców użytkowania i trendów.
+    *   Prognozowanie dostępności rowerów.
+9.  ♿ **Funkcje Dostępności**:
+    *   Informacje o opcjach wynajmu rowerów dostosowanych.
+    *   Filtry do znajdowania rowerów adaptowanych.
+    *   Proponowanie tras dostępnych dla rowerzystów z niepełnosprawnościami.
+10. 🏛️ **Integracja Turystyczna**:
+    *   Wyświetlanie punktów zainteresowania (POI) wzdłuż tras rowerowych.
+    *   Sugestie wycieczek tematycznych.
+    *   Integracja z turystycznymi API.
+
+## 🤝 Wkład (Contributing)
+
+Chcesz pomóc w rozwoju Amsterdam Bike Map? Wkład społeczności jest mile widziany! Aby wnieść swój wkład:
+
+1.  Zrób `fork` repozytorium.
+2.  Utwórz nową gałąź dla swojej funkcji lub poprawki (`git checkout -b feature/twoja-nazwa-funkcji`).
+3.  Wprowadź zmiany i zatwierdź je (`git commit -m 'Dodaj opis wprowadzonych zmian'`). Pisz zrozumiałe komunikaty commitów.
+4.  Wypchnij zmiany do swojego forka (`git push origin feature/twoja-nazwa-funkcji`).
+5.  Otwórz `Pull Request` do głównego repozytorium, opisując wprowadzone zmiany.
+
+Prosimy o przestrzeganie standardów kodowania projektu i dodawanie testów dla nowych funkcjonalności (jeśli dotyczy).
+
+## 📄 Licencja
+
+Ten projekt jest udostępniany na licencji MIT. Zobacz plik [LICENSE](LICENSE) (upewnij się, że plik LICENSE istnieje w repozytorium), aby uzyskać szczegółowe informacje.
+```
+
