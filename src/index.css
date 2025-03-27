@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -160,6 +159,85 @@
   .text-balance {
     text-wrap: balance;
   }
+  
+  /* Bike marker styles */
+  .custom-bike-marker {
+    background: transparent !important;
+    border: none !important;
+    contain: paint;
+  }
+  
+  .bike-marker-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transform-origin: center;
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+  
+  .bike-marker-container.selected {
+    z-index: 1000;
+    transform: scale(1.2);
+    filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.3));
+  }
+  
+  .bike-marker {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+    color: #333;
+    position: relative;
+    transition: all 0.2s ease-in-out;
+    overflow: hidden;
+  }
+  
+  .bike-marker::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.1);
+    z-index: 0;
+    border-radius: 50%;
+  }
+  
+  .bike-marker svg {
+    position: relative;
+    z-index: 1;
+  }
+  
+  .bike-count {
+    position: absolute;
+    bottom: -6px;
+    right: -6px;
+    background: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+  }
+  
+  .bike-marker-container:hover {
+    transform: scale(1.1);
+  }
+  
+  .bike-marker-container:hover .bike-marker {
+    filter: brightness(1.1);
+  }
 }
 
 /* Leaflet Custom Styles */
@@ -174,7 +252,7 @@
 
 .leaflet-control-zoom-in,
 .leaflet-control-zoom-out {
-  @apply !text-foreground !border-border/50 hover:!bg-secondary/80 transition-colors;
+  @apply !text-foreground !border-border/50 hover:bg-secondary/80 transition-colors;
 }
 
 .leaflet-control-attribution {

@@ -14,7 +14,7 @@ const useMap = () => {
     center: DEFAULT_CENTER,
     zoom: DEFAULT_ZOOM
   });
-  const [selectedRental, setSelectedRental] = useState<BikeRental | null>(null);
+  const [selectedRental, setSelectedRentalState] = useState<BikeRental | null>(null);
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
   
   // Initialize map reference
@@ -38,11 +38,29 @@ const useMap = () => {
     }));
   }, [mapInstance, mapState.zoom]);
   
+  // Set selected rental (accepts either BikeRental object or ID string)
+  const setSelectedRental = useCallback((rental: BikeRental | string | null) => {
+    if (!rental) {
+      setSelectedRentalState(null);
+      setMapState(prev => ({ ...prev, selected: undefined }));
+      return;
+    }
+    
+    if (typeof rental === 'string') {
+      // Just update the ID in the map state
+      setMapState(prev => ({ ...prev, selected: rental }));
+    } else {
+      // Update both the rental object and the ID in map state
+      setSelectedRentalState(rental);
+      setMapState(prev => ({ ...prev, selected: rental.id }));
+    }
+  }, []);
+  
   // Handle marker click
   const handleMarkerClick = useCallback((rental: BikeRental) => {
     setSelectedRental(rental);
     panToLocation([rental.location.lat, rental.location.lng]);
-  }, [panToLocation]);
+  }, [panToLocation, setSelectedRental]);
   
   // Get user location
   const getUserLocation = useCallback(() => {
@@ -75,7 +93,7 @@ const useMap = () => {
   const resetView = useCallback(() => {
     panToLocation(DEFAULT_CENTER, DEFAULT_ZOOM);
     setSelectedRental(null);
-  }, [panToLocation]);
+  }, [panToLocation, setSelectedRental]);
   
   return {
     mapInstance,

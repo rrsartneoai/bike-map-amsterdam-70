@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { MapContainer, TileLayer, useMap as useLeafletMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import useMap from '@/hooks/useMap';
@@ -57,6 +57,7 @@ const MapView: React.FC<MapViewProps> = ({
   onMarkerClick
 }) => {
   const { mapState, setSelectedRental } = useMap();
+  const mapRef = useRef<L.Map | null>(null);
 
   // Default map center is Amsterdam
   const defaultCenter: [number, number] = [52.3676, 4.9041];
@@ -70,6 +71,14 @@ const MapView: React.FC<MapViewProps> = ({
     }
   };
 
+  // Handle map initialization
+  const handleMapInit = (map: L.Map) => {
+    mapRef.current = map;
+    if (onMapInit) {
+      onMapInit(map);
+    }
+  };
+
   return (
     <div className="map-container">
       <MapContainer
@@ -78,7 +87,7 @@ const MapView: React.FC<MapViewProps> = ({
         scrollWheelZoom={true}
         zoomControl={false}
         className="h-full w-full"
-        whenCreated={onMapInit}
+        whenReady={(event) => handleMapInit(event.target)}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
