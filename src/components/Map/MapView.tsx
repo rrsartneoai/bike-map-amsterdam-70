@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState } from 'react';
 import { MapContainer, TileLayer, useMap as useLeafletMap, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -47,8 +46,8 @@ interface MapViewProps {
   onMarkerClick?: (rental: BikeRental) => void;
 }
 
-const MapView: React.FC<MapViewProps> = ({ 
-  bikeRentals, 
+const MapView: React.FC<MapViewProps> = ({
+  bikeRentals,
   isLoading,
   selectedRental,
   userLocation,
@@ -98,7 +97,7 @@ const MapView: React.FC<MapViewProps> = ({
           >;
           out body qt;
         `;
-        
+
         const encodedQuery = encodeURIComponent(query.trim());
         const response = await fetch(`https://overpass-api.de/api/interpreter?data=${encodedQuery}`);
 
@@ -117,27 +116,27 @@ const MapView: React.FC<MapViewProps> = ({
           // Get the actual information from the Overpass API
           const name = element.tags?.name || 'Bike Rental';
           const operator = element.tags?.operator || element.tags?.network || 'Unknown';
-          
+
           // For bike counts, use the actual data when available
           let available = 0;
           let total = 0;
-          
+
           if (element.tags?.capacity) {
             total = parseInt(element.tags.capacity, 10) || 0;
           }
-          
+
           if (element.tags?.available_bikes) {
             available = parseInt(element.tags.available_bikes, 10) || 0;
           } else if (total > 0) {
             // Only estimate if we have a total and no available count
             available = Math.floor(Math.random() * (total * 0.3) + (total * 0.5));
           }
-          
+
           // For empty capacity, provide a reasonable default based on the type
           if (total === 0) {
-            if (element.tags?.bicycle_rental === 'shop' || 
-                element.tags?.shop === 'rental' || 
-                element.tags?.shop === 'bicycle') {
+            if (element.tags?.bicycle_rental === 'shop' ||
+              element.tags?.shop === 'rental' ||
+              element.tags?.shop === 'bicycle') {
               // Bike shops typically have more bikes
               total = 20;
               available = 15;
@@ -147,7 +146,7 @@ const MapView: React.FC<MapViewProps> = ({
               available = 6;
             }
           }
-          
+
           // Create bike types from available tags
           const bikeTypes: Record<string, number> = {};
           if (element.tags?.bicycle_types) {
@@ -164,7 +163,7 @@ const MapView: React.FC<MapViewProps> = ({
             // Default to city bikes if no type info available
             bikeTypes['city'] = available;
           }
-          
+
           // Extract amenities from tags
           const amenities: string[] = [];
           if (element.tags?.service) {
@@ -176,7 +175,7 @@ const MapView: React.FC<MapViewProps> = ({
           if (element.tags?.['service:bicycle:pump'] === 'yes') {
             amenities.push('Pump');
           }
-          
+
           // Create the address
           let address = '';
           if (element.tags?.['addr:street'] && element.tags?.['addr:housenumber']) {
@@ -188,7 +187,7 @@ const MapView: React.FC<MapViewProps> = ({
               address += ` ${element.tags['addr:city']}`;
             }
           }
-          
+
           return {
             id: element.id.toString(),
             name: name,
@@ -210,7 +209,7 @@ const MapView: React.FC<MapViewProps> = ({
 
         console.log(`Found ${rentals.length} bike rentals in Amsterdam`);
         setAllBikeRentals(rentals);
-        
+
       } catch (error) {
         console.error('Error fetching bike rentals:', error);
         toast.error('Failed to load all bike rental locations');
@@ -225,7 +224,10 @@ const MapView: React.FC<MapViewProps> = ({
   // Combine the fetched rentals with the ones from props
   const displayRentals = allBikeRentals.length > 0 ? allBikeRentals : bikeRentals;
 
+  console.log("bikeRentals length", bikeRentals.length);
   return (
+    
+    console.log("MapView - displayRentals:", displayRentals),
     <div className="map-container">
       <MapContainer
         center={center || defaultCenter}
@@ -242,14 +244,17 @@ const MapView: React.FC<MapViewProps> = ({
         
         <MapController />
         
-        {!isLoading && !loading && displayRentals.map((rental) => (
-          <MapMarker
-            key={rental.id}
-            rental={rental}
-            isSelected={selectedRental ? selectedRental.id === rental.id : mapState.selected === rental.id}
-            onClick={handleMarkerClick}
-          />
-        ))}
+        {!isLoading && !loading && displayRentals.map((rental) => {
+          console.log("Rental data:", rental);
+          return (
+            <MapMarker
+              key={rental.id}
+              rental={rental}
+              isSelected={selectedRental?.id === rental.id}
+              onClick={handleMarkerClick}
+            />
+          );
+        })}
       </MapContainer>
       
       {/* Loading indicator for Overpass API */}
