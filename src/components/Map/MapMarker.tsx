@@ -3,6 +3,7 @@ import React from 'react';
 import { Marker, Popup } from 'react-leaflet';
 import { Icon } from 'leaflet';
 import { BikeRental } from '@/types';
+import { Bike } from 'lucide-react';
 
 interface MapMarkerProps {
   rental: BikeRental;
@@ -17,21 +18,20 @@ const MapMarker: React.FC<MapMarkerProps> = ({ rental, isSelected = false, onCli
     }
   };
 
-  // Create a proper bike icon
+  // Create a custom bike icon
   const bikeIcon = new Icon({
-    iconUrl: '/logo.svg',
-    iconSize: [30, 30],
-    iconAnchor: [15, 30],
-    popupAnchor: [0, -30],
-    className: isSelected ? 'selected-marker' : ''
+    iconUrl: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="${isSelected ? '#ef4444' : '#2563eb'}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="5.5" cy="17.5" r="3.5"/>
+        <circle cx="18.5" cy="17.5" r="3.5"/>
+        <path d="M15 6a1 1 0 100-2 1 1 0 000 2zm-3 11.5V14l-3-3 4-3 2 3h2"/>
+      </svg>
+    `),
+    iconSize: [32, 32],
+    iconAnchor: [16, 32],
+    popupAnchor: [0, -32],
+    className: `bike-marker ${isSelected ? 'selected-marker' : ''}`
   });
-
-  // Format the bike availability to show in popup
-  const formatBikeAvailability = () => {
-    const available = rental.bikes?.available || 0;
-    const total = rental.bikes?.total || 0;
-    return `${available} / ${total}`;
-  };
 
   // Check if we have valid coordinates
   if (!rental.location || 
@@ -57,7 +57,7 @@ const MapMarker: React.FC<MapMarkerProps> = ({ rental, isSelected = false, onCli
       <Popup className="bike-rental-popup">
         <div className="font-medium">{rental.name}</div>
         <div className="text-sm mt-1">
-          Available bikes: {formatBikeAvailability()}
+          Available bikes: {rental.bikes.available} / {rental.bikes.total}
         </div>
         {rental.operator && (
           <div className="text-xs text-muted-foreground mt-1">

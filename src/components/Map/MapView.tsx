@@ -124,7 +124,7 @@ const MapView: React.FC<MapViewProps> = ({
         
         <MapController />
         
-        {!isLoading && !loading && rentalsToDisplay.length > 0 && (
+        {rentalsToDisplay.length > 0 && (
           <>
             {rentalsToDisplay.map((rental) => (
               <MapMarker
