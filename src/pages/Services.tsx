@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { Link } from 'react-router-dom';
@@ -10,14 +11,40 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { fetchBikeRentals, fetchBicycleNetworkRoutes, fetchOVFietsLocations } from '@/lib/api';
+import { 
+  fetchBikeRentals, 
+  fetchBicycleNetworkRoutes, 
+  fetchOVFietsLocations,
+  fetchPublicTransportDepartures
+} from '@/lib/api';
 import { BikeRental } from '@/types';
+
+// Type definition for public transport data from the service
+interface TransportDeparture {
+  id: string;
+  line?: string;
+  departureTime: string;
+  destination: string;
+  platform?: string;
+  delay: number;
+}
+
+interface PublicTransportData {
+  train: TransportDeparture[];
+  tram: TransportDeparture[];
+  bus: TransportDeparture[];
+}
 
 const Services = () => {
   const [bikeRentals, setBikeRentals] = useState<BikeRental[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [bicycleNetworkData, setBicycleNetworkData] = useState<any>(null);
   const [ovFietsLocations, setOVFietsLocations] = useState<BikeRental[]>([]);
+  const [publicTransportData, setPublicTransportData] = useState<PublicTransportData>({
+    train: [],
+    tram: [],
+    bus: []
+  });
   
   const [lastUpdated, setLastUpdated] = useState<string>(new Date().toLocaleTimeString());
   
@@ -26,10 +53,11 @@ const Services = () => {
       try {
         setIsLoading(true);
         
-        const [rentalsResponse, networkData, ovFietsData] = await Promise.all([
+        const [rentalsResponse, networkData, ovFietsData, transportData] = await Promise.all([
           fetchBikeRentals(),
           fetchBicycleNetworkRoutes(),
-          fetchOVFietsLocations()
+          fetchOVFietsLocations(),
+          fetchPublicTransportDepartures()
         ]);
         
         if (rentalsResponse && rentalsResponse.data) {
@@ -46,6 +74,10 @@ const Services = () => {
         
         if (ovFietsData) {
           setOVFietsLocations(ovFietsData.slice(0, 3));
+        }
+        
+        if (transportData) {
+          setPublicTransportData(transportData);
         }
       } catch (error) {
         console.error('Error fetching data:', error);
