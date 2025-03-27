@@ -1,5 +1,5 @@
 
-import { Clock, MapPin, Phone, Star, X } from 'lucide-react';
+import { Clock, MapPin, Phone, Star, X, Info } from 'lucide-react';
 import { BikeRental } from '@/types';
 import { cn } from '@/lib/utils';
 
@@ -9,11 +9,6 @@ interface BikeRentalCardProps {
 }
 
 const BikeRentalCard = ({ rental, onClose }: BikeRentalCardProps) => {
-  const formatOpeningHours = (hours: { days: string; hours: string }[]) => {
-    if (!hours || hours.length === 0) return 'Hours not available';
-    return hours.map(h => `${h.days}: ${h.hours}`).join(', ');
-  };
-  
   return (
     <div className="glass-card rounded-lg overflow-hidden">
       {/* Header with image if available */}
@@ -56,6 +51,12 @@ const BikeRentalCard = ({ rental, onClose }: BikeRentalCardProps) => {
           </p>
         )}
         
+        {/* ID */}
+        <div className="text-xs text-muted-foreground mt-1 flex items-center">
+          <span className="font-semibold">ID:</span> 
+          <span className="ml-1">{rental.id}</span>
+        </div>
+        
         {/* Address */}
         {rental.address && (
           <div className="flex items-start gap-2 mt-3">
@@ -66,7 +67,7 @@ const BikeRentalCard = ({ rental, onClose }: BikeRentalCardProps) => {
         
         {/* Opening hours */}
         {rental.openingHours && rental.openingHours.length > 0 && (
-          <div className="flex items-start gap-2 mt-2">
+          <div className="flex items-start gap-2 mt-3">
             <Clock className="w-5 h-5 text-muted-foreground flex-shrink-0 mt-0.5" />
             <div className="flex-1">
               {rental.openingHours.map((hours, index) => (
@@ -141,9 +142,15 @@ const BikeRentalCard = ({ rental, onClose }: BikeRentalCardProps) => {
           </div>
         )}
         
+        {/* GPS coordinates */}
+        <div className="text-xs text-muted-foreground mt-4 flex">
+          <span className="font-semibold">GPS:</span> 
+          <span className="ml-1">{rental.location.lat.toFixed(6)}, {rental.location.lng.toFixed(6)}</span>
+        </div>
+        
         {/* Last updated info */}
         {rental.lastUpdated && (
-          <div className="mt-4 text-xs text-muted-foreground">
+          <div className="mt-2 text-xs text-muted-foreground">
             Last updated: {new Date(rental.lastUpdated).toLocaleString()}
           </div>
         )}
