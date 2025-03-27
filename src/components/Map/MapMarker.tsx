@@ -1,9 +1,13 @@
 
+import React from 'react';
+import { Marker, Popup } from 'react-leaflet';
+import { Icon } from 'leaflet';
 import { BikeRental } from '@/types';
 
 interface MapMarkerProps {
   rental: BikeRental;
   isSelected?: boolean;
+  onClick?: (rental: BikeRental) => void;
 }
 
 const getBikeAvailabilityColor = (available: number, total: number): string => {
@@ -13,33 +17,52 @@ const getBikeAvailabilityColor = (available: number, total: number): string => {
   return 'bg-green-500';
 };
 
-const MapMarker = ({ rental, isSelected = false }: MapMarkerProps): string => {
+const MapMarker: React.FC<MapMarkerProps> = ({ rental, isSelected = false, onClick }) => {
   const availabilityColor = getBikeAvailabilityColor(
     rental.bikes.available,
     rental.bikes.total
   );
   
-  const markerSize = isSelected ? 'w-10 h-10' : 'w-8 h-8';
-  const markerScale = isSelected ? 'scale-110' : 'scale-100';
-  const markerShadow = isSelected ? 'shadow-lg' : 'shadow-md';
-  const zIndex = isSelected ? 'z-20' : 'z-10';
-  const ringColor = isSelected ? 'ring-2 ring-primary ring-offset-2' : '';
-  
-  return `
-    <div class="transition-all duration-300 ease-elastic ${markerScale} ${zIndex}">
-      <div class="${markerSize} rounded-full bg-white flex items-center justify-center ${markerShadow} ${ringColor}">
-        <div class="flex flex-col items-center justify-center w-full h-full p-1">
-          <div class="text-sm font-semibold">
-            ${rental.bikes.available}
+  // Create a custom icon
+  const markerSize = isSelected ? 25 : 20;
+  const customIcon = new Icon({
+    iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
+    shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
+    iconSize: [markerSize, markerSize * 1.5],
+    iconAnchor: [markerSize / 2, markerSize * 1.5],
+    popupAnchor: [0, -markerSize],
+    className: isSelected ? 'selected-marker' : ''
+  });
+
+  const handleClick = () => {
+    if (onClick) {
+      onClick(rental);
+    }
+  };
+
+  return (
+    <Marker 
+      position={[rental.location.lat, rental.location.lng]} 
+      icon={customIcon}
+      eventHandlers={{
+        click: handleClick
+      }}
+    >
+      <Popup>
+        <div className="p-2">
+          <h3 className="font-semibold">{rental.name}</h3>
+          <div className="text-sm mt-1">
+            <span className="font-medium">Available bikes: </span>
+            <span className={`inline-block w-3 h-3 rounded-full ${availabilityColor} mr-1`}></span>
+            <span>{rental.bikes.available} / {rental.bikes.total}</span>
           </div>
-          <div class="${availabilityColor} w-2 h-2 rounded-full"></div>
+          {rental.address && (
+            <div className="text-sm mt-1">{rental.address}</div>
+          )}
         </div>
-      </div>
-      ${isSelected ? `
-        <div class="absolute bottom-0 left-1/2 w-0 h-0 border-l-8 border-r-8 border-t-8 border-l-transparent border-r-transparent border-t-white transform -translate-x-1/2 translate-y-1/2"></div>
-      ` : ''}
-    </div>
-  `;
+      </Popup>
+    </Marker>
+  );
 };
 
 export default MapMarker;

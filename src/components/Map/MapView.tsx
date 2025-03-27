@@ -1,8 +1,8 @@
 
 import React, { useEffect } from 'react';
-import { MapContainer, TileLayer, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, useMap as useLeafletMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import { useMap as useMapContext } from '@/hooks/useMap';
+import useMap from '@/hooks/useMap';
 import L from 'leaflet';
 import { BikeRental } from '@/types';
 import MapMarker from './MapMarker';
@@ -22,8 +22,8 @@ L.Marker.prototype.options.icon = DefaultIcon;
 
 // Component to handle map center and zoom changes
 const MapController = () => {
-  const { mapState } = useMapContext();
-  const map = useMap();
+  const { mapState } = useMap();
+  const map = useLeafletMap();
 
   useEffect(() => {
     map.setView(mapState.center, mapState.zoom, {
@@ -38,10 +38,25 @@ const MapController = () => {
 interface MapViewProps {
   bikeRentals: BikeRental[];
   isLoading: boolean;
+  selectedRental?: BikeRental | null;
+  userLocation?: [number, number] | null;
+  center?: [number, number];
+  zoom?: number;
+  onMapInit?: (map: L.Map) => void;
+  onMarkerClick?: (rental: BikeRental) => void;
 }
 
-const MapView: React.FC<MapViewProps> = ({ bikeRentals, isLoading }) => {
-  const { mapState, setSelectedRental } = useMapContext();
+const MapView: React.FC<MapViewProps> = ({ 
+  bikeRentals, 
+  isLoading,
+  selectedRental,
+  userLocation,
+  center,
+  zoom,
+  onMapInit,
+  onMarkerClick
+}) => {
+  const { mapState, setSelectedRental } = useMap();
 
   // Default map center is Amsterdam
   const defaultCenter: [number, number] = [52.3676, 4.9041];
@@ -50,17 +65,20 @@ const MapView: React.FC<MapViewProps> = ({ bikeRentals, isLoading }) => {
   // Handle marker click
   const handleMarkerClick = (rental: BikeRental) => {
     setSelectedRental(rental.id);
+    if (onMarkerClick) {
+      onMarkerClick(rental);
+    }
   };
 
   return (
     <div className="map-container">
       <MapContainer
-        center={defaultCenter}
-        zoom={defaultZoom}
+        center={center || defaultCenter}
+        zoom={zoom || defaultZoom}
         scrollWheelZoom={true}
         zoomControl={false}
         className="h-full w-full"
-        // Remove the invalid tap property
+        whenCreated={onMapInit}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -74,8 +92,8 @@ const MapView: React.FC<MapViewProps> = ({ bikeRentals, isLoading }) => {
             <MapMarker
               key={rental.id}
               rental={rental}
-              isSelected={mapState.selected === rental.id}
-              onClick={() => handleMarkerClick(rental)}
+              isSelected={selectedRental ? selectedRental.id === rental.id : mapState.selected === rental.id}
+              onClick={handleMarkerClick}
             />
           ))}
       </MapContainer>

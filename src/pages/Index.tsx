@@ -9,9 +9,8 @@ import FilterPanel from '@/components/Filters/FilterPanel';
 import BikeRentalCard from '@/components/UI/BikeRentalCard';
 import Navbar from '@/components/Nav/Navbar';
 import useMap from '@/hooks/useMap';
-import { fetchBikeRentals, getBikeRentalDetails } from '@/lib/api';
+import { fetchBikeRentals } from '@/lib/api';
 import { BikeRental, FilterOptions, SearchResult } from '@/types';
-import { cn } from '@/lib/utils';
 
 const Index = () => {
   // State for filtered rentals
@@ -132,6 +131,7 @@ const Index = () => {
       {/* Map component */}
       <MapView
         bikeRentals={filteredRentals}
+        isLoading={isLoading}
         selectedRental={selectedRental}
         userLocation={userLocation}
         center={mapState.center}
